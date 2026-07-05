@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProteinPulse</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%92%AA%F0%9F%8F%BC</text></svg>">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1><span class="logo" aria-hidden="true">💪🏼</span>Protein<span class="accent">Pulse</span></h1>
+      <p class="today-date" id="todayDate"></p>
+    </div>
+    <div class="header-right">
+      <a class="support-link" href="https://azqato.github.io/support.html" target="_blank" rel="noopener noreferrer">Support</a>
+      <div class="goal-summary">
+        <p>Goal: <span id="goalCalories">0 kcal</span></p>
+        <p><span id="goalProtein">0g protein</span></p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" type="button" data-view="today">Today</button>
+    <button class="tab" type="button" data-view="week">Week</button>
+    <button class="tab" type="button" data-view="month">Month</button>
+  </nav>
+
+  <main class="today-view">
+    <section id="view-today" class="view">
+      <section class="stat-row card">
+        <div class="ring-stat">
+          <div class="ring" id="calorieRing" style="--pct: 0%;">
+            <span class="ring-value" id="calorieRingValue">0%</span>
+          </div>
+          <p class="ring-label">Calories</p>
+          <p class="ring-caption" id="calorieCaption">0 kcal / 0 kcal</p>
+        </div>
+
+        <div class="center-stat">
+          <p class="center-value" id="kcalToday">0</p>
+          <p class="center-caption">kcal today</p>
+          <p class="center-value secondary" id="proteinToday">0g</p>
+          <p class="center-caption">protein today</p>
+        </div>
+
+        <div class="ring-stat">
+          <div class="ring ring-protein" id="proteinRing" style="--pct: 0%;">
+            <span class="ring-value" id="proteinRingValue">0%</span>
+          </div>
+          <p class="ring-label secondary">Protein</p>
+          <p class="ring-caption" id="proteinCaption">0g / 0g</p>
+        </div>
+      </section>
+
+      <table class="data-table">
+        <tbody>
+          <tr>
+            <td>Calories</td>
+            <td id="caloriesRow">0 kcal / 0 kcal</td>
+          </tr>
+          <tr>
+            <td>Protein</td>
+            <td id="proteinRow">0g / 0g</td>
+          </tr>
+          <tr>
+            <td>Calorie:Protein ratio</td>
+            <td id="ratioRow">N/A</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <section class="log-entry card">
+        <h2>Log Entry</h2>
+        <form id="logEntryForm">
+          <div class="form-row">
+            <label>
+              Calories
+              <input type="number" id="inputCalories" placeholder="0" min="0">
+            </label>
+            <label>
+              Protein (g)
+              <input type="number" id="inputProtein" placeholder="0" min="0">
+            </label>
+          </div>
+          <label class="form-row-single">
+            Label (optional)
+            <input type="text" id="inputLabel" placeholder="e.g. Chicken breast">
+          </label>
+          <button class="btn-primary" type="submit">+ Add to Today</button>
+        </form>
+      </section>
+
+      <section class="entry-list-placeholder card" id="entryList">
+        <p class="empty-state">No entries logged yet.</p>
+      </section>
+
+      <table class="data-table">
+        <tbody>
+          <tr>
+            <td>Remaining calories</td>
+            <td class="accent" id="remainingCalories">0 kcal</td>
+          </tr>
+          <tr>
+            <td>Remaining protein</td>
+            <td class="secondary" id="remainingProtein">0g</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <section class="card goal-editor">
+        <h2>Daily Goal</h2>
+        <form id="goalForm">
+          <div class="form-row">
+            <label>
+              Calorie goal
+              <input type="number" id="goalCalorieInput" placeholder="2500" min="0">
+            </label>
+            <label>
+              Protein goal (g)
+              <input type="number" id="goalProteinInput" placeholder="200" min="0">
+            </label>
+          </div>
+          <button class="btn-primary" type="submit">Save Goal</button>
+          <p class="placeholder-note">Applies from today forward until you change it again.</p>
+        </form>
+      </section>
+
+      <section class="card data-io">
+        <h2>Data</h2>
+        <div class="io-row">
+          <button class="btn-secondary" type="button" id="exportBtn">Export to .xlsx</button>
+          <label class="btn-secondary file-label">
+            Choose file
+            <input type="file" id="importFile" accept=".xlsx">
+          </label>
+          <button class="btn-secondary" type="button" id="importBtn">Import from .xlsx</button>
+        </div>
+        <p class="placeholder-note" id="importFileName">No file chosen. Importing replaces all current data.</p>
+      </section>
+    </section>
+
+    <section id="view-week" class="view" hidden>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Ratio</th>
+          </tr>
+        </thead>
+        <tbody id="weekTableBody"></tbody>
+      </table>
+    </section>
+
+    <section id="view-month" class="view" hidden>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Ratio</th>
+          </tr>
+        </thead>
+        <tbody id="monthTableBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <section class="roadmap">
+    <h2>Roadmap</h2>
+    <table class="data-table roadmap-table">
+      <thead>
+        <tr>
+          <th>Milestone</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>v0.0.1 - Template scaffold</td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
+        </tr>
+        <tr>
+          <td>Branding - 💪🏼 emoji as favicon and main logo</td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
+        </tr>
+        <tr>
+          <td>v0.1.0 - Today view logging + local storage</td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
+        </tr>
+        <tr>
+          <td>v0.2.0 - Goal editor with carry-forward model</td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
+        </tr>
+        <tr>
+          <td>v0.3.0 - xlsx export / import</td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
+        </tr>
+        <tr>
+          <td>v0.4.0 - Week / Month views</td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
+        </tr>
+        <tr>
+          <td>v0.5.0 - Graphs for Week and Month views</td>
+          <td><span class="roadmap-status status-planned">Planned</span></td>
+        </tr>
+        <tr>
+          <td>v0.6.0 - Year view</td>
+          <td><span class="roadmap-status status-planned">Planned</span></td>
+        </tr>
+        <tr>
+          <td>v1.0.0 - Responsive + accessibility audit</td>
+          <td><span class="roadmap-status status-planned">Planned</span></td>
+        </tr>
+        <tr class="deferred">
+          <td>Google Sheets live sync</td>
+          <td><span class="roadmap-status status-deferred">Deferred</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="site-footer">Built by <a href="https://github.com/Azqato">Azqato</a>.</footer>
+
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/xlsx-io.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

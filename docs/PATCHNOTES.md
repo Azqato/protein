@@ -1,0 +1,81 @@
+# Patch Notes
+
+## v0.4.1 - 2026-07-05
+
+### Added
+- Added a site footer, "Built by Azqato" linking to https://github.com/Azqato, matching the footer pattern used on azqato.github.io.
+- Added a Support link (opens https://azqato.github.io/support.html in a new tab) to the header's grey area, to the left of the Goal summary.
+
+### Changed
+- Restructured the header into a `.header-right` wrapper containing the Support link and the Goal summary side by side, so Support sits directly beside the goal text rather than in the Today/Week/Month tab bar.
+- Scoped the tab-switching click handler to `.tab[data-view]` instead of every `.tab`, so non-view elements that reuse tab-like styling (like the Support link, before it moved to the header) can't accidentally hide every view.
+
+## v0.4.0 - 2026-07-05
+
+### Added
+- Built Week and Month views: `.data-table` rollups showing date, calorie total (with goal if one applies), protein total (with goal), and the calorie:protein ratio for every day in the range. Week shows the last 7 days; Month shows every day so far in the current calendar month.
+- Added a calorie:protein ratio (calories per gram of protein, e.g. "12.5:1") to the Today view's totals table and as a column on the Week/Month tables; displays "N/A" when protein is zero instead of dividing by zero.
+- Added a Date column to the itemized entry list so each logged entry shows the day it was logged on, in addition to its label and macros.
+- Added roadmap milestones for v0.5.0 (graphs for the Week and Month views) and v0.6.0 (a Year view), both planned, not yet built.
+
+### Changed
+- Marked v0.1.0 through v0.4.0 and the branding milestone as Complete in the roadmap table (docs/PRD.md and the live table in index.html).
+
+## v0.3.0 - 2026-07-05
+
+### Added
+- Vendored the real SheetJS library (`vendor/xlsx.full.min.js`, downloaded from the official SheetJS CDN) to replace the placeholder README that had been sitting in `/vendor` since v0.0.1.
+- Implemented `exportToWorkbook()` and `importFromWorkbook()` in js/xlsx-io.js: export writes a two-sheet workbook (Entries, Goals) via `XLSX.writeFile`; import reads a selected `.xlsx` file, validates both sheets are present, and resolves parsed entries/goals or rejects with a descriptive error.
+- Added an Export/Import card to the Today view: an Export button, a styled file-choose control, and an Import button that confirms with the user (native `window.confirm`) before overwriting local storage, since import is a full-replace operation.
+- Verified the export/import round-trip logic (json_to_sheet → XLSX.write → XLSX.read → sheet_to_json) with an automated headless-browser test confirming entry counts, calorie values, labels, and goal values all survive the round trip unchanged.
+
+## v0.2.0 - 2026-07-05
+
+### Added
+- Implemented the carry-forward goal model in js/storage.js: `resolveGoalForDate()` finds the latest goal with an effective date on or before the date being viewed; `upsertGoal()` replaces the goal for a given effective date instead of duplicating it.
+- Added a Goal editor card to the Today view: setting a calorie/protein goal takes effect from today forward and is reflected immediately in the header's goal summary, the rings, and the totals table.
+- Verified carry-forward behavior with an automated test: a goal set on an earlier date still applies to dates before a later goal change, and applies the newer goal from its effective date onward.
+
+## v0.1.0 - 2026-07-05
+
+### Added
+- Made the Today view fully functional: the Log Entry form (Calories, Protein, optional Label) now submits real entries to local storage instead of being disabled placeholder controls.
+- Implemented js/storage.js: `loadEntries()`/`saveEntries()`, `loadGoals()`/`saveGoals()`, `generateId()` (using `crypto.randomUUID()` with a manual fallback for unsupported/insecure contexts), and date helpers (`todayStr()`, `dateToStr()`).
+- Implemented js/app.js: renders the calorie/protein rings, kcal-today readout, totals table, and remaining-budget row from real entry data; renders an itemized, deletable entry list for the current day; wires up Today/Week/Month tab switching.
+- Verified date formatting and ID generation with an automated headless-browser test covering `dateToStr()` output and uniqueness of generated entry IDs.
+
+### Changed
+- Marked v0.1.0 Complete in the roadmap table.
+
+## v0.0.2 - 2026-07-05
+
+### Added
+- Adopted the 💪🏼 emoji as the site's favicon (inline SVG data URI, no binary asset) and as a logo mark in the header next to the ProteinPulse wordmark.
+- Converted the Today view's flat totals rows and the roadmap list into real `<table>` elements with alternating grey row stripes and a raised header row, replacing the earlier `<div>`-based rows and `<ul>`-based roadmap.
+- Wrapped the stat row, log-entry form, and entry-list placeholder in `.card` panels (bordered, rounded, raised surface) so the page reads as distinct layered panels.
+
+### Changed
+- Replaced the near-black `#000000`/`#0d0d0d` palette with a VS Code Dark+ inspired grey scale (`--bg: #1e1e1e`, `--surface: #252526`, `--surface-raised: #2d2d2d`, `--text: #d4d4d4`) after feedback that the original background was too dark and the palette wasn't "artistically designed."
+- Gave the top header its own `--header-bg` (`#333333`) tier instead of blending into the page background.
+- Split the blue accent into two tokens after feedback that blue and white text weren't legible enough: `--accent` (`#0018f9`, deep saturated blue) stays reserved for solid fills like the primary button and ring arc; a new `--accent-text` (`#6b87ff`) is used everywhere blue appears as text (ring labels, active tab, accent-colored values, focus outline), since the deep blue measured only ~2.3:1 contrast as text against the dark background versus ~5.2–6:1 for the brighter token.
+- Replaced the teal secondary accent (`#22c9a3`) with a warm amber (`#e8a33d`, `--accent-secondary`) for the protein ring/label/value, chosen as blue's complementary color for a stronger visual split between calories and protein, and to better match the muted, desaturated accent tones typical of VS Code themes.
+
+## v0.0.1 - 2026-07-05
+
+### Added
+- Created initial project documentation: root README.md, docs/PRD.md, docs/DESIGN.md, docs/PATCHNOTES.md.
+- Defined the product scope for ProteinPulse: a serverless, vanilla HTML/CSS/JS calorie and protein tracker with no accounts and no food database.
+- Defined the data model: itemized Entry records (with optional label) and a carry-forward Goal model, both designed to map directly to flat spreadsheet rows for future .xlsx export/import.
+- Defined the design system: dark-mode-only palette built around #0018F9 (accent) and #ffffff (primary text), adapted from the structure of the referenced net-worth-tracker DESIGN.md.
+- Established a documentation process: exactly three docs (README, PRD, DESIGN) plus PATCHNOTES, code as source of truth, and a no-em-dash writing style policy (covering both the literal character and the &mdash; entity, excluding CSS custom properties like --accent).
+- Built the v0.0.1 template scaffold: index.html, css/styles.css, and stub js/app.js, js/storage.js, js/xlsx-io.js files, matching the design system with placeholder (disabled) log-entry controls and a roadmap section listing every upcoming milestone with its status.
+- Added a vendor/ folder with a placeholder README noting the SheetJS library will be vendored there in v0.3.0.
+
+### Changed
+- N/A - no prior documentation existed.
+
+### Fixed
+- Removed em dashes (both the literal character and the &mdash; entity) and stray double-dash punctuation that had been introduced across README.md, docs/PRD.md, and docs/DESIGN.md while those files were first being written, replacing each with the comma, colon, semicolon, parentheses, or period called for by context, per the Writing Style methodology documented in docs/PRD.md.
+
+### Removed
+- N/A - no prior documentation existed.

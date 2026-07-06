@@ -51,10 +51,11 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 - Year view: rollup of every month in the viewed year (aggregated from daily totals), a matching chart, and prior/next year navigation.
 - Fully responsive across the breakpoints defined in [DESIGN.md](DESIGN.md#breakpoints): manually audited at all three breakpoints across all four views with zero horizontal overflow.
 - In-app confirm/notice modal for the import flow, replacing native `window.confirm`/`window.alert` dialogs, matching the rest of the design system.
+- Landing page (`landing.html`): a separate marketing- and education-oriented overview page introducing ProteinPulse to a first-time visitor (hero, problem statement, how-it-works steps, feature grid, tenets, FAQ), linked from the app header's About link. Distinct from the app itself: `index.html` stays the tool, the landing page sells and explains it.
 
 ### Future (post-launch)
 
-- Landing page: a separate marketing- and education-oriented overview page introducing ProteinPulse to a first-time visitor (what it is, who it's for, how it works), distinct from the app itself (`index.html` stays the tool; the landing page sells and explains it).
+- Entry deletion from the Week, Month, and Year views: today, an entry can only be deleted from the Today view's itemized list. The rollup views show totals per day/month with no way to drill into or remove a specific entry from a past day without navigating back to that day in the Today view first. Next priority after the landing page.
 - Local file sync via the File System Access API (post-v1.0): let a user pick an existing `.xlsx` file once (e.g. one already sitting in Downloads) and have the app silently re-save updates to that same file on future changes, instead of triggering a new browser download each time. Chromium-only (Chrome, Edge, Opera): Safari and Firefox don't implement `showOpenFilePicker`/`showSaveFilePicker`, so the existing manual Export/Import buttons remain the fallback path on those browsers. Needs a feasibility spike to confirm permission persistence across browser restarts before it's scheduled.
 - Google Sheets live sync: push/pull entries and goals to a linked Google Sheet whenever data changes, using the same `.xlsx`-shaped schema so the sheet and local storage stay structurally identical.
 - Streak tracking (consecutive days meeting protein goal).
@@ -112,7 +113,8 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 | v0.5.0: Graphs for the Week and Month views | Done | Complete |
 | v0.6.0: Year view | Done | Complete |
 | v1.0.0: Full responsive audit + accessibility pass | Done | Complete |
-| Landing page: marketing/educational overview page | Post-v1 | Planned |
+| Landing page: marketing/educational overview page | Done | Complete |
+| Entry deletion from Week/Month/Year views | Post-v1 | Planned |
 | Local file sync via File System Access API (Chromium-only) | Post-v1 | Planned (deferred) |
 | Google Sheets live sync | Post-v1 | Planned (deferred) |
 
@@ -191,8 +193,10 @@ Fully static, client-only single-page app. One `index.html`, plain CSS, plain JS
 /project-root
 ├── README.md
 ├── index.html
+├── landing.html          # marketing/educational overview page, separate from the app
 ├── /css
-│   └── styles.css
+│   ├── styles.css
+│   └── landing.css       # landing-page-only styles, built on styles.css tokens
 ├── /js
 │   ├── app.js            # view rendering, event wiring
 │   ├── storage.js        # localStorage read/write, goal carry-forward resolution, monthly aggregation

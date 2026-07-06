@@ -1,5 +1,16 @@
 # Patch Notes
 
+## v1.1.0 - 2026-07-05
+
+### Added
+- Added `landing.html` and `css/landing.css`: a separate marketing/educational overview page (hero, problem statement, three-step how-it-works, feature grid, tenets, and a short FAQ), distinct from the app itself. Reuses every color token and most components from `css/styles.css` (cards, buttons, the ring/stat-row visual, footer) rather than introducing new ones.
+- Added an "About" link to the app's header (`.header-right`, left of the existing Support link) pointing to `landing.html`; the landing page links back via "Open ProteinPulse" calls to action.
+- Added "Entry deletion from Week/Month/Year views" to the roadmap as the next planned item after this release: today, deleting an entry is only possible from the Today view's itemized list.
+
+### Changed
+- Marked the Landing Page milestone Complete in the roadmap table (PRD.md and the live table in index.html).
+- Changed the "Built by Azqato" footer link (index.html and landing.html) from the GitHub profile to https://azqato.com/, opening in a new tab since it leaves the site.
+
 ## v1.0.1 - 2026-07-05
 
 ### Fixed

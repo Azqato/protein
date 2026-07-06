@@ -1,0 +1,247 @@
+/* Landing page only: marketing/educational overview of ProteinPulse.
+   Assumes css/styles.css is loaded first for shared tokens, .card, .btn-primary,
+   .btn-secondary, .site-footer, and the ring/stat-row components reused in the hero. */
+
+.landing {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.hero {
+  text-align: center;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+.hero-title {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 16px;
+}
+
+.hero-sub {
+  max-width: 56ch;
+  margin: 0 auto 28px;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.landing-cta-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.landing-cta {
+  width: auto;
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+.hero-visual {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.landing-section {
+  margin-bottom: 56px;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.section-body {
+  max-width: 62ch;
+  margin: 0 auto;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.steps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.step {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.step-index {
+  font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-text);
+  padding-top: 3px;
+  flex: 0 0 auto;
+}
+
+.step-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.step-body {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  padding: 20px;
+  margin-bottom: 0;
+}
+
+.feature-title {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.feature-body {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.tenet-list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 62ch;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tenet-list li {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tenet-list strong {
+  color: var(--text);
+}
+
+.faq {
+  max-width: 62ch;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.faq-question {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 14.5px;
+}
+
+.faq-answer {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.landing-faq-link {
+  display: block;
+  text-align: center;
+  margin-top: 24px;
+  color: var(--accent-text);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.landing-faq-link:hover {
+  text-decoration: underline;
+}
+
+.landing-final-cta {
+  text-align: center;
+  padding-top: 8px;
+}
+
+.landing-final-cta .section-title {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1022px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 699px) {
+  .landing {
+    padding: 32px 16px 56px;
+  }
+
+  .hero {
+    padding-bottom: 28px;
+    margin-bottom: 28px;
+  }
+
+  .hero-visual {
+    padding: 24px 16px;
+  }
+
+  .feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .step {
+    gap: 14px;
+  }
+
+  .landing-cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .landing-cta {
+    width: 100%;
+  }
+}

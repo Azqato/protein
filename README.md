@@ -36,6 +36,8 @@ python -m http.server 8000
 
 Then open `http://localhost:8000` in a browser. Opening `index.html` directly via `file://` also works, since the app makes no network calls.
 
+`index.html` is the app. `landing.html` is a separate marketing/educational overview page linked from the app's header; it has no logic of its own and reuses `css/styles.css` plus a page-specific `css/landing.css`.
+
 ## Environment Variables
 
 None. This app has no server, no API keys, and no configuration required to run.

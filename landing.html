@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProteinPulse: two numbers, every day</title>
+  <meta name="description" content="ProteinPulse is a free, open-source calorie and protein tracker that runs entirely in your browser. No account, no food database, no server.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%92%AA%F0%9F%8F%BC</text></svg>">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1><span class="logo" aria-hidden="true">💪🏼</span>Protein<span class="accent">Pulse</span></h1>
+      <p class="today-date">Free and open source</p>
+    </div>
+    <div class="header-right">
+      <a class="support-link" href="index.html">Open the app</a>
+      <a class="support-link" href="https://github.com/Azqato/protein" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
+  </header>
+
+  <main class="landing">
+    <section class="hero">
+      <p class="landing-eyebrow">Free, open source, no account</p>
+      <h2 class="hero-title">Two numbers. Every day. Nothing else.</h2>
+      <p class="hero-sub">ProteinPulse tracks calories and protein against a goal you set. No food database to search, no login screen, and no server that ever sees what you eat.</p>
+      <div class="landing-cta-row">
+        <a class="btn-primary landing-cta" href="index.html">Open ProteinPulse</a>
+        <a class="btn-secondary landing-cta" href="https://github.com/Azqato/protein" target="_blank" rel="noopener noreferrer">View source on GitHub</a>
+      </div>
+
+      <div class="hero-visual card" aria-hidden="true">
+        <div class="stat-row">
+          <div class="ring-stat">
+            <div class="ring" style="--pct: 72%;">
+              <span class="ring-value">72%</span>
+            </div>
+            <p class="ring-label">Calories</p>
+            <p class="ring-caption">1440 kcal / 2000 kcal</p>
+          </div>
+          <div class="center-stat">
+            <p class="center-value">1440</p>
+            <p class="center-caption">kcal today</p>
+            <p class="center-value secondary">142g</p>
+            <p class="center-caption">protein today</p>
+          </div>
+          <div class="ring-stat">
+            <div class="ring ring-protein" style="--pct: 94%;">
+              <span class="ring-value">94%</span>
+            </div>
+            <p class="ring-label secondary">Protein</p>
+            <p class="ring-caption">142g / 150g</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <h2 class="section-title">Most trackers assume you want the hard part</h2>
+      <p class="section-body">Searching a food database for a number you already know from the label. Creating an account to log a chicken breast. Sending your eating habits to a company's server so it can show you ads later. ProteinPulse skips all three.</p>
+    </section>
+
+    <section class="landing-section">
+      <h2 class="section-title">How it works</h2>
+      <ol class="steps-list">
+        <li class="step">
+          <span class="step-index">01</span>
+          <div>
+            <p class="step-title">Set a goal once</p>
+            <p class="step-body">Calories and protein. It carries forward every day until you set a new one, so you never re-enter it.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-index">02</span>
+          <div>
+            <p class="step-title">Log as you eat</p>
+            <p class="step-body">Type the numbers you already know, tap add, done in under ten seconds.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-index">03</span>
+          <div>
+            <p class="step-title">Watch the ring fill</p>
+            <p class="step-body">See exactly how much room is left today, then check the Week, Month, or Year view for the bigger picture.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="landing-section">
+      <h2 class="section-title">What you get</h2>
+      <div class="feature-grid">
+        <div class="card feature-card">
+          <p class="feature-title">Local-first and private</p>
+          <p class="feature-body">Every entry lives in your browser's local storage. Nothing is sent anywhere unless you choose to export it.</p>
+        </div>
+        <div class="card feature-card">
+          <p class="feature-title">Real spreadsheet export</p>
+          <p class="feature-body">One click writes a real <code>.xlsx</code> file, two sheets, openable in Excel or Google Sheets. Import it back on any device.</p>
+        </div>
+        <div class="card feature-card">
+          <p class="feature-title">Charted history</p>
+          <p class="feature-body">Week, Month, and Year views roll up your totals with charts, not just tables, plus your calorie:protein ratio at a glance.</p>
+        </div>
+        <div class="card feature-card">
+          <p class="feature-title">Carry-forward goals</p>
+          <p class="feature-body">Set a calorie and protein goal once. It applies to every day going forward until you change it.</p>
+        </div>
+        <div class="card feature-card">
+          <p class="feature-title">No account, ever</p>
+          <p class="feature-body">No signup, no password, no email. Open the page and start logging.</p>
+        </div>
+        <div class="card feature-card">
+          <p class="feature-title">Free and open source</p>
+          <p class="feature-body">No premium tier, no ads. Read the code, fork it, or self-host it yourself.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section">
+      <h2 class="section-title">Why it's different</h2>
+      <ul class="tenet-list">
+        <li><strong>No number lookup, ever.</strong> You always type the number you already know; ProteinPulse never asks you to search a food database.</li>
+        <li><strong>Your data never leaves your machine.</strong> No analytics, no third-party requests, no server round trip for core logging.</li>
+        <li><strong>Ten-second logging beats perfect data.</strong> Speed wins every time it conflicts with completeness, which is why a food label is optional.</li>
+      </ul>
+    </section>
+
+    <section class="landing-section">
+      <h2 class="section-title">Questions</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <p class="faq-question">Do I need to create an account?</p>
+          <p class="faq-answer">No. There are no accounts, logins, or passwords anywhere in the app.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-question">Where is my data stored?</p>
+          <p class="faq-answer">In your browser's local storage, on your device only. Nothing is sent to a server.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-question">What happens if I clear my browser data?</p>
+          <p class="faq-answer">Your log is lost unless you've exported it. Export regularly to an <code>.xlsx</code> file as a backup.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-question">Can I use it on my phone?</p>
+          <p class="faq-answer">Yes. It's fully responsive and works in any modern mobile browser. There's no native app.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-question">Does it track carbs, fat, or other nutrients?</p>
+          <p class="faq-answer">Not yet. It's intentionally scoped to calories and protein for now.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-question">Is it really free?</p>
+          <p class="faq-answer">Yes. It's free and open source, with no premium tier planned for the core logging and export features.</p>
+        </div>
+      </div>
+      <a class="landing-faq-link" href="https://github.com/Azqato/protein/blob/main/docs/PRD.md#frequently-asked-questions">Read the full FAQ in the docs</a>
+    </section>
+
+    <section class="landing-final-cta">
+      <h2 class="section-title">Log your first entry in under 10 seconds</h2>
+      <a class="btn-primary landing-cta" href="index.html">Open ProteinPulse</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">Built by <a href="https://azqato.com/" target="_blank" rel="noopener noreferrer">Azqato</a>.</footer>
+</body>
+</html>

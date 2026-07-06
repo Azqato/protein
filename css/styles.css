@@ -43,9 +43,19 @@ body {
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.brand-link {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.brand-link:hover {
+  opacity: 0.85;
 }
 
 .logo {
@@ -70,11 +80,12 @@ body {
 .header-right {
   display: flex;
   align-items: flex-start;
+  flex-wrap: wrap;
   gap: 16px;
 }
 
-.support-link {
-  color: var(--text-muted);
+.nav-link {
+  color: var(--text);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
@@ -87,19 +98,14 @@ body {
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.support-link:hover {
+.nav-link:hover {
   color: var(--accent-text);
   border-color: var(--accent-text);
 }
 
-.goal-summary {
-  text-align: right;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.goal-summary p {
-  margin: 0;
+.nav-link.active {
+  color: var(--accent-text);
+  border-color: var(--accent-text);
 }
 
 .tabs {
@@ -264,6 +270,72 @@ body {
 
 .data-table th:last-child {
   text-align: right;
+}
+
+.row-toggle {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.row-toggle:hover {
+  color: var(--accent-text);
+}
+
+.row-toggle:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+.row-toggle[aria-expanded="true"]::after {
+  content: "\25be";
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.row-toggle[aria-expanded="false"]::after {
+  content: "\25b8";
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.entry-subrow td {
+  background: var(--surface-alt);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.entry-subrow-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.entry-subrow-item:last-child {
+  border-bottom: none;
+}
+
+.entry-subrow-item .entry-label {
+  color: var(--text-muted);
+  flex: 1 1 auto;
+}
+
+.entry-subrow-item .entry-macros {
+  color: var(--text);
+  font-weight: 600;
 }
 
 .log-entry {
@@ -553,8 +625,7 @@ input:disabled {
 .roadmap {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px;
-  border-top: 1px solid var(--border);
+  padding: 32px 24px 48px;
 }
 
 .site-footer {
@@ -633,10 +704,6 @@ input:disabled {
   .header-right {
     width: 100%;
     justify-content: space-between;
-  }
-
-  .goal-summary {
-    text-align: left;
   }
 
   .stat-row {

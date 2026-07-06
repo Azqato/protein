@@ -8,6 +8,12 @@
   padding: 48px 24px 80px;
 }
 
+.landing-tagline {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 12px;
+}
+
 .hero {
   text-align: center;
   padding-bottom: 40px;

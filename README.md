@@ -36,7 +36,7 @@ python -m http.server 8000
 
 Then open `http://localhost:8000` in a browser. Opening `index.html` directly via `file://` also works, since the app makes no network calls.
 
-`index.html` is the app. `landing.html` is a separate marketing/educational overview page linked from the app's header; it has no logic of its own and reuses `css/styles.css` plus a page-specific `css/landing.css`.
+`index.html` is the app. `landing.html` is a separate marketing/educational overview page; it has no logic of its own and reuses `css/styles.css` plus a page-specific `css/landing.css`. `roadmap.html` is the Roadmap table, also its own page. All three share the same header navigation.
 
 ## Environment Variables
 

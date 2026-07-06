@@ -41,6 +41,7 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 - Today view: calorie ring, protein ring, kcal-today readout, remaining calories/remaining protein rows (as in the reference screenshot).
 - Log-entry form: Calories (number), Protein (number, grams), optional Label (text); submits as one entry, added to today's running totals.
 - Itemized entry list for the current day: shows each logged entry's date, label (or "Entry" if blank), and calories/protein, with a delete affordance.
+- Entry deletion from the Week and Month views: clicking a date row expands it in place into that day's itemized entries (same delete affordance as Today), collapsing back after any delete since the whole view re-renders. The Year view is month-aggregated, so clicking a month row instead jumps to the Month view for that month, where entry-level deletion happens.
 - Goal editor: set calorie goal and protein goal; takes effect from the date it's set forward (carry-forward model: see Data Models below).
 - Calorie:protein ratio: computed as calories per gram of protein (e.g. "12.5:1"), shown on the Today totals table, as a column on the Week/Month/Year tables, and as a line overlay on each view's chart; reads "N/A" when protein is zero to avoid a divide-by-zero display.
 - Local storage persistence: all entries and goal history persist across reloads with no backend.
@@ -51,13 +52,12 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 - Year view: rollup of every month in the viewed year (aggregated from daily totals), a matching chart, and prior/next year navigation.
 - Fully responsive across the breakpoints defined in [DESIGN.md](DESIGN.md#breakpoints): manually audited at all three breakpoints across all four views with zero horizontal overflow.
 - In-app confirm/notice modal for the import flow, replacing native `window.confirm`/`window.alert` dialogs, matching the rest of the design system.
-- Landing page (`landing.html`): a separate marketing- and education-oriented overview page introducing ProteinPulse to a first-time visitor (hero, problem statement, how-it-works steps, feature grid, tenets, FAQ), linked from the app header's About link. Distinct from the app itself: `index.html` stays the tool, the landing page sells and explains it.
+- Landing page (`landing.html`): a separate marketing- and education-oriented overview page introducing ProteinPulse to a first-time visitor (hero, problem statement, how-it-works steps, feature grid, tenets, FAQ), linked from the site navigation's About link. Distinct from the app itself: `index.html` stays the tool, the landing page sells and explains it.
+- Roadmap page (`roadmap.html`): the Roadmap table, formerly at the bottom of `index.html` below every logging view, now lives on its own page, reachable from the site navigation. `index.html` no longer contains a Roadmap section.
+- Site navigation: a five-link nav (About, App, Roadmap, GitHub, Support) shared identically across `index.html`, `landing.html`, and `roadmap.html`. Whichever page you're on renders in blue (`--accent-text`); every other link renders in high-contrast white (`--text`) rather than the previous muted grey, matching the same "blue means active" convention already used by the Today/Week/Month/Year tabs. The "ProteinPulse" wordmark in the header is also a clickable link to the About page on all three pages.
 
 ### Future (post-launch)
 
-- Entry deletion from the Week, Month, and Year views: today, an entry can only be deleted from the Today view's itemized list. The rollup views show totals per day/month with no way to drill into or remove a specific entry from a past day without navigating back to that day in the Today view first. Next priority after the landing page.
-- Header contrast and navigation pass: the "Open the app"/"GitHub" links on `landing.html` and the "About"/"Support" links on `index.html` currently share one muted, low-contrast style (`--text-muted`) regardless of state. Rework them into a real site navigation: default links in a higher-contrast white (`--text`), with the current page highlighted in blue (`--accent-text`), mirroring the pattern already used by the Today/Week/Month/Year tabs. Also brighten the "Free and open source" tagline on `landing.html` (currently `--text-muted`, reported hard to read) and re-check the "Protein" half of the "ProteinPulse" wordmark for the same contrast complaint, even though it currently inherits the same `--text` token as the rest of the app's body copy.
-- Move the Roadmap out of the app: the Roadmap table currently lives at the bottom of `index.html`, below the Today/Week/Month/Year views. Remove it from the app page and give it its own page (e.g. `roadmap.html`), linked from the site navigation instead of scrolled past on every visit to the logging tool.
 - Local file sync via the File System Access API (post-v1.0): let a user pick an existing `.xlsx` file once (e.g. one already sitting in Downloads) and have the app silently re-save updates to that same file on future changes, instead of triggering a new browser download each time. Chromium-only (Chrome, Edge, Opera): Safari and Firefox don't implement `showOpenFilePicker`/`showSaveFilePicker`, so the existing manual Export/Import buttons remain the fallback path on those browsers. Needs a feasibility spike to confirm permission persistence across browser restarts before it's scheduled.
 - Google Sheets live sync: push/pull entries and goals to a linked Google Sheet whenever data changes, using the same `.xlsx`-shaped schema so the sheet and local storage stay structurally identical.
 - Streak tracking (consecutive days meeting protein goal).
@@ -101,26 +101,28 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 
 ### Current Phase
 
-**Phase 1 complete: v1.0.0 shipped.** Logging, goals, xlsx import/export, charted Week/Month/Year rollups, and a responsive/accessibility hardening pass are all live. Remaining roadmap items are explicitly post-v1.
+**Phase 1 complete: v1.2.0 shipped.** Logging, goals, xlsx import/export, charted Week/Month/Year rollups with entry-level deletion, a responsive/accessibility hardening pass, a landing page, a dedicated roadmap page, and a consistent site-wide navigation are all live. Remaining roadmap items are explicitly post-v1, unscheduled.
 
-| Milestone | Timeframe | Status |
-|---|---|---|
-| Documentation (README, PRD, DESIGN, PATCHNOTES) | Done | Complete |
-| v0.0.1: Template version of the site with placeholders for upcoming milestones | Done | Complete |
-| Branding: use the 💪🏼 emoji as the site favicon and the main logo | Done | Complete |
-| v0.1.0: Today view + logging + local storage | Done | Complete |
-| v0.2.0: Goal editor with carry-forward model | Done | Complete |
-| v0.3.0: xlsx export/import | Done | Complete |
-| v0.4.0: Week/Month views | Done | Complete |
-| v0.5.0: Graphs for the Week and Month views | Done | Complete |
-| v0.6.0: Year view | Done | Complete |
-| v1.0.0: Full responsive audit + accessibility pass | Done | Complete |
-| Landing page: marketing/educational overview page | Done | Complete |
-| Entry deletion from Week/Month/Year views | Post-v1 | Planned |
-| Header contrast and navigation pass | Post-v1 | Planned |
-| Move Roadmap out of the app into its own page | Post-v1 | Planned |
-| Local file sync via File System Access API (Chromium-only) | Post-v1 | Planned (deferred) |
-| Google Sheets live sync | Post-v1 | Planned (deferred) |
+| Milestone | Version | Timeframe | Status |
+|---|---|---|---|
+| Documentation (README, PRD, DESIGN, PATCHNOTES) | v0.0.1 | Done | Complete |
+| Template scaffold | v0.0.1 | Done | Complete |
+| Branding: use the 💪🏼 emoji as the site favicon and the main logo | v0.0.2 | Done | Complete |
+| Today view + logging + local storage | v0.1.0 | Done | Complete |
+| Goal editor with carry-forward model | v0.2.0 | Done | Complete |
+| xlsx export/import | v0.3.0 | Done | Complete |
+| Week/Month views | v0.4.0 | Done | Complete |
+| Footer and header Support link | v0.4.1 | Done | Complete |
+| Graphs for the Week and Month views | v0.5.0 | Done | Complete |
+| Year view | v0.6.0 | Done | Complete |
+| Full responsive audit + accessibility pass | v1.0.0 | Done | Complete |
+| Modal backdrop visibility fix | v1.0.1 | Done | Complete |
+| Landing page: marketing/educational overview page | v1.1.0 | Done | Complete |
+| Entry deletion from Week/Month/Year views | v1.2.0 | Done | Complete |
+| Header contrast and navigation pass | v1.2.0 | Done | Complete |
+| Move Roadmap out of the app into its own page | v1.2.0 | Done | Complete |
+| Local file sync via File System Access API (Chromium-only) | TBD | Post-v1 | Planned (deferred) |
+| Google Sheets live sync | TBD | Post-v1 | Planned (deferred) |
 
 ### Explicitly Deferred Items
 
@@ -198,6 +200,7 @@ Fully static, client-only single-page app. One `index.html`, plain CSS, plain JS
 ├── README.md
 ├── index.html
 ├── landing.html          # marketing/educational overview page, separate from the app
+├── roadmap.html          # Roadmap table, its own page, linked from the site navigation
 ├── /css
 │   ├── styles.css
 │   └── landing.css       # landing-page-only styles, built on styles.css tokens
@@ -242,7 +245,7 @@ There are no HTTP endpoints. Internal "API" is the module boundary between `stor
 
 ### State Management
 
-All state is derived from two `localStorage` keys (`proteinpulse_entries`, `proteinpulse_goals`), read on load into in-memory arrays and re-serialized on every mutation. No client-side router or framework state: views (Today/Week/Month/Year) are plain functions that read the same in-memory arrays and re-render their section of the DOM. The Month and Year views additionally hold a small in-memory offset (not persisted) tracking which month/year is currently being viewed.
+All state is derived from two `localStorage` keys (`proteinpulse_entries`, `proteinpulse_goals`), read on load into in-memory arrays and re-serialized on every mutation. No client-side router or framework state: views (Today/Week/Month/Year) are plain functions that read the same in-memory arrays and re-render their section of the DOM, all routed through a single `switchToView(viewKey)` function that both the tab buttons and the Year view's month-drilldown links call, so there's one place that decides which view is visible and re-renders it. The Month and Year views additionally hold a small in-memory offset (not persisted) tracking which month/year is currently being viewed. Deleting an entry from an expanded Week/Month row re-renders the whole parent view (collapsing it back), the same "re-render everything" pattern the Today view has always used after any mutation.
 
 ### Third-Party Integrations
 
@@ -260,6 +263,7 @@ All state is derived from two `localStorage` keys (`proteinpulse_entries`, `prot
 - **Lighthouse accessibility score is not automated**: this project has no CI and no Node.js-based tooling, so the ≥95 target in Success Criteria is verified by a manual audit (contrast ratios calculated by hand, keyboard/focus walkthroughs, screen-reader passes) rather than an actual Lighthouse run. Worth automating if a CI pipeline is ever added.
 - **Year view recomputes daily totals on every render**: `totalsForMonth()` sums `totalsFor()` across every day of every month shown, with no memoization. Fine at current data scale (a few years of entries); would need caching if the entry list grows very large.
 - **Charts have no export of their own**: the Week/Month/Year charts are visual-only; the underlying numbers are already covered by the existing `.xlsx` export and the tables beneath each chart, but there's no "save chart as image" affordance.
+- **No bulk delete for a day's entries**: the Week/Month expandable rows delete one entry at a time, same as the Today view; clearing an entire day still means deleting each entry individually.
 
 ## Security
 

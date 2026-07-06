@@ -10,16 +10,15 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      <h1><span class="logo" aria-hidden="true">💪🏼</span>Protein<span class="accent">Pulse</span></h1>
+      <h1><a class="brand-link" href="landing.html"><span class="logo" aria-hidden="true">💪🏼</span>Protein<span class="accent">Pulse</span></a></h1>
       <p class="today-date" id="todayDate"></p>
     </div>
     <div class="header-right">
-      <a class="support-link" href="landing.html">About</a>
-      <a class="support-link" href="https://azqato.github.io/support.html" target="_blank" rel="noopener noreferrer">Support</a>
-      <div class="goal-summary">
-        <p>Goal: <span id="goalCalories">0 kcal</span></p>
-        <p><span id="goalProtein">0g protein</span></p>
-      </div>
+      <a class="nav-link" href="landing.html">About</a>
+      <a class="nav-link active" href="index.html">App</a>
+      <a class="nav-link" href="roadmap.html">Roadmap</a>
+      <a class="nav-link" href="https://github.com/Azqato/protein" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="nav-link" href="https://azqato.github.io/support.html" target="_blank" rel="noopener noreferrer">Support</a>
     </div>
   </header>
 
@@ -199,80 +198,6 @@
       </table>
     </section>
   </main>
-
-  <section class="roadmap">
-    <h2>Roadmap</h2>
-    <table class="data-table roadmap-table">
-      <thead>
-        <tr>
-          <th>Milestone</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>v0.0.1 - Template scaffold</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Branding - 💪🏼 emoji as favicon and main logo</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>v0.1.0 - Today view logging + local storage</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>v0.2.0 - Goal editor with carry-forward model</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>v0.3.0 - xlsx export / import</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>v0.4.0 - Week / Month views</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>v0.5.0 - Graphs for Week and Month views</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>v0.6.0 - Year view</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>v1.0.0 - Responsive + accessibility audit</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Landing page: marketing / educational overview page</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Entry deletion from Week / Month / Year views</td>
-          <td><span class="roadmap-status status-planned">Planned</span></td>
-        </tr>
-        <tr>
-          <td>Header contrast and navigation pass</td>
-          <td><span class="roadmap-status status-planned">Planned</span></td>
-        </tr>
-        <tr>
-          <td>Move Roadmap out of the app into its own page</td>
-          <td><span class="roadmap-status status-planned">Planned</span></td>
-        </tr>
-        <tr class="deferred">
-          <td>Local file sync via File System Access API (Chromium-only)</td>
-          <td><span class="roadmap-status status-deferred">Deferred</span></td>
-        </tr>
-        <tr class="deferred">
-          <td>Google Sheets live sync</td>
-          <td><span class="roadmap-status status-deferred">Deferred</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
 
   <footer class="site-footer">Built by <a href="https://azqato.com/" target="_blank" rel="noopener noreferrer">Azqato</a>.</footer>
 

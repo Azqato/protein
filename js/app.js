@@ -19,18 +19,20 @@ document.getElementById("todayDate").textContent = new Date().toLocaleDateString
 });
 
 const tabs = document.querySelectorAll(".tab[data-view]");
-tabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    tabs.forEach((t) => t.classList.remove("active"));
-    tab.classList.add("active");
-    const view = tab.dataset.view;
-    Object.entries(views).forEach(([key, el]) => {
-      el.hidden = key !== view;
-    });
-    if (view === "week") renderWeek();
-    if (view === "month") renderMonth();
-    if (view === "year") renderYear();
+
+function switchToView(viewKey) {
+  tabs.forEach((t) => t.classList.toggle("active", t.dataset.view === viewKey));
+  Object.entries(views).forEach(([key, el]) => {
+    el.hidden = key !== viewKey;
   });
+  if (viewKey === "today") renderToday();
+  if (viewKey === "week") renderWeek();
+  if (viewKey === "month") renderMonth();
+  if (viewKey === "year") renderYear();
+}
+
+tabs.forEach((tab) => {
+  tab.addEventListener("click", () => switchToView(tab.dataset.view));
 });
 
 function entriesForDate(dateStr) {
@@ -62,9 +64,6 @@ function renderGoalSummary() {
   const goal = resolveGoalForDate(todayStr(), goals);
   const calorieGoal = goal ? Number(goal.calorieGoal) || 0 : 0;
   const proteinGoal = goal ? Number(goal.proteinGoal) || 0 : 0;
-
-  document.getElementById("goalCalories").textContent = `${calorieGoal} kcal`;
-  document.getElementById("goalProtein").textContent = `${proteinGoal}g protein`;
 
   const calorieInput = document.getElementById("goalCalorieInput");
   const proteinInput = document.getElementById("goalProteinInput");
@@ -210,7 +209,60 @@ function dayOfMonthLabel(dateStr) {
   return String(Number(dateStr.split("-")[2]));
 }
 
-function renderDayRows(tbody, dateStrs) {
+// Builds the expandable itemized-entry row shown under a Week/Month date row.
+// `onDeleted` is the parent view's own render function (renderWeek/renderMonth),
+// called after any delete so the whole view rebuilds consistently, the same
+// pattern renderToday() already uses after any mutation.
+function renderEntrySubrow(afterRow, dateStr, onDeleted) {
+  const subrow = document.createElement("tr");
+  subrow.className = "entry-subrow";
+
+  const td = document.createElement("td");
+  td.colSpan = 4;
+
+  const dayEntries = entriesForDate(dateStr).sort((a, b) => b.timestamp - a.timestamp);
+
+  if (dayEntries.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = "No entries logged yet.";
+    td.appendChild(empty);
+  } else {
+    dayEntries.forEach((entry) => {
+      const item = document.createElement("div");
+      item.className = "entry-subrow-item";
+
+      const label = document.createElement("span");
+      label.className = "entry-label";
+      label.textContent = entry.label || "Entry";
+      item.appendChild(label);
+
+      const macros = document.createElement("span");
+      macros.className = "entry-macros";
+      macros.textContent = `${entry.calories} kcal / ${entry.protein}g`;
+      item.appendChild(macros);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "btn-delete";
+      deleteBtn.textContent = "Delete";
+      deleteBtn.addEventListener("click", () => {
+        entries = entries.filter((e) => e.id !== entry.id);
+        saveEntries(entries);
+        onDeleted();
+      });
+      item.appendChild(deleteBtn);
+
+      td.appendChild(item);
+    });
+  }
+
+  subrow.appendChild(td);
+  afterRow.insertAdjacentElement("afterend", subrow);
+  return subrow;
+}
+
+function renderDayRows(tbody, dateStrs, refreshFn) {
   tbody.innerHTML = "";
   dateStrs.forEach((dateStr) => {
     const totals = totalsFor(dateStr);
@@ -221,7 +273,24 @@ function renderDayRows(tbody, dateStrs) {
     const tr = document.createElement("tr");
 
     const dateTd = document.createElement("td");
-    dateTd.textContent = dateStr;
+    const toggleBtn = document.createElement("button");
+    toggleBtn.type = "button";
+    toggleBtn.className = "row-toggle";
+    toggleBtn.textContent = dateStr;
+    toggleBtn.setAttribute("aria-expanded", "false");
+    let subrow = null;
+    toggleBtn.addEventListener("click", () => {
+      const expanded = toggleBtn.getAttribute("aria-expanded") === "true";
+      if (expanded) {
+        subrow.remove();
+        subrow = null;
+        toggleBtn.setAttribute("aria-expanded", "false");
+      } else {
+        subrow = renderEntrySubrow(tr, dateStr, refreshFn);
+        toggleBtn.setAttribute("aria-expanded", "true");
+      }
+    });
+    dateTd.appendChild(toggleBtn);
     tr.appendChild(dateTd);
 
     const calorieTd = document.createElement("td");
@@ -266,7 +335,7 @@ function renderDayChart(containerId, title, dateStrs, labelFn) {
 
 function renderWeek() {
   const dateStrs = lastNDates(7);
-  renderDayRows(document.getElementById("weekTableBody"), dateStrs);
+  renderDayRows(document.getElementById("weekTableBody"), dateStrs, renderWeek);
   renderDayChart("weekChart", "Calories and protein for the last 7 days", dateStrs, weekdayLabel);
 }
 
@@ -293,7 +362,7 @@ function renderMonth() {
   });
   document.getElementById("monthNextBtn").disabled = monthOffset >= 0;
 
-  renderDayRows(document.getElementById("monthTableBody"), dateStrs);
+  renderDayRows(document.getElementById("monthTableBody"), dateStrs, renderMonth);
   renderDayChart("monthChart", "Calories and protein for the month", dateStrs, dayOfMonthLabel);
 }
 
@@ -335,7 +404,15 @@ function renderYear() {
 
     const tr = document.createElement("tr");
     const monthTd = document.createElement("td");
-    monthTd.textContent = new Date(year, month, 1).toLocaleDateString(undefined, { month: "long" });
+    const monthBtn = document.createElement("button");
+    monthBtn.type = "button";
+    monthBtn.className = "row-toggle";
+    monthBtn.textContent = new Date(year, month, 1).toLocaleDateString(undefined, { month: "long" });
+    monthBtn.addEventListener("click", () => {
+      monthOffset = (year - now.getFullYear()) * 12 + (month - now.getMonth());
+      switchToView("month");
+    });
+    monthTd.appendChild(monthBtn);
     tr.appendChild(monthTd);
     const calorieTd = document.createElement("td");
     calorieTd.textContent = `${totals.calories} kcal`;

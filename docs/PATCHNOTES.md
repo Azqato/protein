@@ -1,5 +1,25 @@
 # Patch Notes
 
+## v1.2.0 - 2026-07-06
+
+### Added
+- Added entry deletion from the Week and Month views: clicking a date row expands it in place into that day's itemized entries (label, macros, delete button), reusing the same delete affordance as the Today view. Deleting collapses the row and re-renders the whole parent view, the same pattern the Today view already used after any mutation.
+- Added a drill-down path from the Year view: since Year rows are month-aggregated (not entry-level), clicking a month row jumps to the Month view for that month instead of expanding in place, where entry-level deletion then happens.
+- Added `roadmap.html`: the Roadmap table, previously the last section of `index.html`, now lives on its own page. Added a Version column to the table so every milestone cites the patch note it shipped in (or `TBD` for unscheduled deferred items), not just the ones that happened to have a version number in their title already.
+- Added a shared five-link site navigation (About, App, Roadmap, GitHub, Support), rendered identically in `.header-right` across `index.html`, `landing.html`, and `roadmap.html`.
+- Added a clickable "ProteinPulse" wordmark in the header, linking to the About page, on all three pages.
+
+### Changed
+- Reworked header links from a single muted style (`.support-link`, always `--text-muted`) into `.nav-link`, defaulting to high-contrast `--text` with a `.nav-link.active` state in `--accent-text` (blue) for whichever page you're on, matching the convention the Today/Week/Month/Year tabs already used.
+- Changed the "Free and open source" tagline on `landing.html` from the muted `.today-date` class to a new `.landing-tagline` class set to `--text`, since it was reported hard to read; verified the "Protein" half of the wordmark is already on `--text` (~11:1 contrast) and needed no change.
+- Extracted the Today/Week/Month/Year tab-switching logic into a single `switchToView(viewKey)` function in `js/app.js`, reused by both the tab buttons and the new Year-to-Month drilldown links.
+
+### Removed
+- Removed the "Goal: X kcal / Yg protein" summary from the header's top-right; the same numbers are already visible in the Today view's ring captions, totals table, and remaining-budget rows.
+
+### Fixed
+- Fixed switching back to the Today tab not refreshing its numbers after an entry was deleted from a different view (e.g. an expanded Week row); `switchToView()` previously only re-rendered Week/Month/Year, never Today, since Today had always been re-rendered directly by its own form/delete handlers until entries could now be deleted from elsewhere.
+
 ## v1.1.2 - 2026-07-05
 
 ### Added

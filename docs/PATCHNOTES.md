@@ -1,5 +1,10 @@
 # Patch Notes
 
+## v1.0.1 - 2026-07-05
+
+### Fixed
+- Fixed the import-confirmation modal (`.modal-backdrop`) rendering visibly on every page load instead of staying hidden. The `.modal-backdrop { display: flex; }` rule (an author-stylesheet class selector) was overriding the browser's default `[hidden] { display: none; }` rule (a same-specificity user-agent selector), since author styles always win ties with user-agent styles. Since the backdrop is `position: fixed`, this showed up as an empty grey box floating in the center of the viewport at all times. Added an explicit `.modal-backdrop[hidden] { display: none; }` rule so the `hidden` attribute is respected again.
+
 ## v1.0.0 - 2026-07-05
 
 ### Added

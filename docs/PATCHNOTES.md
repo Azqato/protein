@@ -1,5 +1,13 @@
 # Patch Notes
 
+## v1.1.1 - 2026-07-05
+
+### Fixed
+- Fixed the live roadmap table in `index.html` still showing "Landing page" as Planned; v1.1.0's patch notes claimed this was updated but the table markup itself was never actually changed. `docs/PRD.md`'s table was correct; `index.html`'s was not.
+
+### Added
+- Added "Header contrast and navigation pass" to the roadmap: the header links on both pages currently share one muted, low-contrast style regardless of which page you're on. Planned rework: default links in `--text` (higher contrast) with the current page highlighted in `--accent-text` (blue), matching the existing Today/Week/Month/Year tab pattern. Also covers the "Free and open source" tagline on `landing.html` (currently `--text-muted`, reported hard to read) and a re-check of the "Protein" half of the wordmark for the same complaint.
+
 ## v1.1.0 - 2026-07-05
 
 ### Added

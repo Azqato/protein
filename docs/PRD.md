@@ -56,6 +56,7 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 ### Future (post-launch)
 
 - Entry deletion from the Week, Month, and Year views: today, an entry can only be deleted from the Today view's itemized list. The rollup views show totals per day/month with no way to drill into or remove a specific entry from a past day without navigating back to that day in the Today view first. Next priority after the landing page.
+- Header contrast and navigation pass: the "Open the app"/"GitHub" links on `landing.html` and the "About"/"Support" links on `index.html` currently share one muted, low-contrast style (`--text-muted`) regardless of state. Rework them into a real site navigation: default links in a higher-contrast white (`--text`), with the current page highlighted in blue (`--accent-text`), mirroring the pattern already used by the Today/Week/Month/Year tabs. Also brighten the "Free and open source" tagline on `landing.html` (currently `--text-muted`, reported hard to read) and re-check the "Protein" half of the "ProteinPulse" wordmark for the same contrast complaint, even though it currently inherits the same `--text` token as the rest of the app's body copy.
 - Local file sync via the File System Access API (post-v1.0): let a user pick an existing `.xlsx` file once (e.g. one already sitting in Downloads) and have the app silently re-save updates to that same file on future changes, instead of triggering a new browser download each time. Chromium-only (Chrome, Edge, Opera): Safari and Firefox don't implement `showOpenFilePicker`/`showSaveFilePicker`, so the existing manual Export/Import buttons remain the fallback path on those browsers. Needs a feasibility spike to confirm permission persistence across browser restarts before it's scheduled.
 - Google Sheets live sync: push/pull entries and goals to a linked Google Sheet whenever data changes, using the same `.xlsx`-shaped schema so the sheet and local storage stay structurally identical.
 - Streak tracking (consecutive days meeting protein goal).
@@ -115,6 +116,7 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 | v1.0.0: Full responsive audit + accessibility pass | Done | Complete |
 | Landing page: marketing/educational overview page | Done | Complete |
 | Entry deletion from Week/Month/Year views | Post-v1 | Planned |
+| Header contrast and navigation pass | Post-v1 | Planned |
 | Local file sync via File System Access API (Chromium-only) | Post-v1 | Planned (deferred) |
 | Google Sheets live sync | Post-v1 | Planned (deferred) |
 

@@ -70,3 +70,22 @@ function upsertGoal(effectiveDate, calorieGoal, proteinGoal, goals) {
   }
   return goals;
 }
+
+function daysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+// Sums per-day totals (from `totalsFor`, passed in as `totalsForFn`) across a whole
+// calendar month, so the Year view's monthly aggregation shares the exact same
+// per-day definition of a "total" as the Today/Week/Month views.
+function totalsForMonth(year, month, totalsForFn) {
+  const total = { calories: 0, protein: 0 };
+  const count = daysInMonth(year, month);
+  for (let day = 1; day <= count; day++) {
+    const dateStr = dateToStr(new Date(year, month, day));
+    const dayTotals = totalsForFn(dateStr);
+    total.calories += dayTotals.calories;
+    total.protein += dayTotals.protein;
+  }
+  return total;
+}

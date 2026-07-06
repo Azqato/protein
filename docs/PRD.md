@@ -42,18 +42,20 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 - Log-entry form: Calories (number), Protein (number, grams), optional Label (text); submits as one entry, added to today's running totals.
 - Itemized entry list for the current day: shows each logged entry's date, label (or "Entry" if blank), and calories/protein, with a delete affordance.
 - Goal editor: set calorie goal and protein goal; takes effect from the date it's set forward (carry-forward model: see Data Models below).
-- Calorie:protein ratio: computed as calories per gram of protein (e.g. "12.5:1"), shown on the Today totals table and as a column on the Week/Month tables; reads "N/A" when protein is zero to avoid a divide-by-zero display.
+- Calorie:protein ratio: computed as calories per gram of protein (e.g. "12.5:1"), shown on the Today totals table, as a column on the Week/Month/Year tables, and as a line overlay on each view's chart; reads "N/A" when protein is zero to avoid a divide-by-zero display.
 - Local storage persistence: all entries and goal history persist across reloads with no backend.
 - Export to `.xlsx`: one workbook, two sheets (Entries, Goals), downloadable via a button.
 - Import from `.xlsx`: file picker restores entries + goal history into local storage, with a confirmation step before overwriting existing data.
-- Week view: rollup of the last 7 days (totals, goal adherence, and ratio per day).
-- Month view: rollup of every day so far in the current month (totals, goal adherence, and ratio per day).
-- Fully responsive across the breakpoints defined in [DESIGN.md](DESIGN.md#breakpoints) (visual audit still pending; see v1.0.0 in Roadmap).
+- Week view: rollup of the last 7 days (totals, goal adherence, and ratio per day), plus a bar chart (calories, protein, and a ratio line overlay) above the table.
+- Month view: rollup of every day so far in the viewed month (totals, goal adherence, and ratio per day), a matching chart, and prior/next month navigation.
+- Year view: rollup of every month in the viewed year (aggregated from daily totals), a matching chart, and prior/next year navigation.
+- Fully responsive across the breakpoints defined in [DESIGN.md](DESIGN.md#breakpoints): manually audited at all three breakpoints across all four views with zero horizontal overflow.
+- In-app confirm/notice modal for the import flow, replacing native `window.confirm`/`window.alert` dialogs, matching the rest of the design system.
 
 ### Future (post-launch)
 
-- Graphs for the Week and Month views (v0.5.0): visualize the existing rollup tables (calories, protein, ratio per day) as charts rather than table rows only.
-- Year view (v0.6.0): a rollup across a full year, following the same pattern as Week/Month.
+- Landing page: a separate marketing- and education-oriented overview page introducing ProteinPulse to a first-time visitor (what it is, who it's for, how it works), distinct from the app itself (`index.html` stays the tool; the landing page sells and explains it).
+- Local file sync via the File System Access API (post-v1.0): let a user pick an existing `.xlsx` file once (e.g. one already sitting in Downloads) and have the app silently re-save updates to that same file on future changes, instead of triggering a new browser download each time. Chromium-only (Chrome, Edge, Opera): Safari and Firefox don't implement `showOpenFilePicker`/`showSaveFilePicker`, so the existing manual Export/Import buttons remain the fallback path on those browsers. Needs a feasibility spike to confirm permission persistence across browser restarts before it's scheduled.
 - Google Sheets live sync: push/pull entries and goals to a linked Google Sheet whenever data changes, using the same `.xlsx`-shaped schema so the sheet and local storage stay structurally identical.
 - Streak tracking (consecutive days meeting protein goal).
 - Multiple goal profiles (e.g. "cut" vs "bulk" presets to switch between).
@@ -96,25 +98,28 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 
 ### Current Phase
 
-**Phase 1: Core functionality built.** The app is no longer a static template: logging, goals, xlsx import/export, and week/month rollups are all wired to local storage and working.
+**Phase 1 complete: v1.0.0 shipped.** Logging, goals, xlsx import/export, charted Week/Month/Year rollups, and a responsive/accessibility hardening pass are all live. Remaining roadmap items are explicitly post-v1.
 
 | Milestone | Timeframe | Status |
 |---|---|---|
-| Documentation (README, PRD, DESIGN, PATCHNOTES) | Now | Complete |
+| Documentation (README, PRD, DESIGN, PATCHNOTES) | Done | Complete |
 | v0.0.1: Template version of the site with placeholders for upcoming milestones | Done | Complete |
 | Branding: use the 💪🏼 emoji as the site favicon and the main logo | Done | Complete |
 | v0.1.0: Today view + logging + local storage | Done | Complete |
 | v0.2.0: Goal editor with carry-forward model | Done | Complete |
 | v0.3.0: xlsx export/import | Done | Complete |
 | v0.4.0: Week/Month views | Done | Complete |
-| v0.5.0: Graphs for the Week and Month views | Next | Planned |
-| v0.6.0: Year view | Next | Planned |
-| v1.0.0: Full responsive audit + accessibility pass | Next | Planned |
+| v0.5.0: Graphs for the Week and Month views | Done | Complete |
+| v0.6.0: Year view | Done | Complete |
+| v1.0.0: Full responsive audit + accessibility pass | Done | Complete |
+| Landing page: marketing/educational overview page | Post-v1 | Planned |
+| Local file sync via File System Access API (Chromium-only) | Post-v1 | Planned (deferred) |
 | Google Sheets live sync | Post-v1 | Planned (deferred) |
 
 ### Explicitly Deferred Items
 
 - **Google Sheets live sync**: deferred because it requires OAuth/API-key handling, which conflicts with the "no server, no account" constraint until a clean client-only auth flow (e.g. Google Identity Services with a user-supplied API key) is designed and explicitly opted into by the user.
+- **Local file sync via File System Access API**: deferred pending a feasibility spike, since it's Chromium-only and its file-handle permission needs to be re-verified (and possibly re-granted) across browser restarts; needs testing before it's promised as a real feature rather than a Chrome-only convenience.
 - **Multiple goal profiles**: deferred until single-goal carry-forward is proven sufficient; adding profiles now would complicate the data model before there's evidence it's needed.
 - **CSV export**: deferred since `.xlsx` covers the stated requirement (Excel/Sheets compatibility); CSV adds a second export path with no new capability.
 
@@ -190,8 +195,10 @@ Fully static, client-only single-page app. One `index.html`, plain CSS, plain JS
 │   └── styles.css
 ├── /js
 │   ├── app.js            # view rendering, event wiring
-│   ├── storage.js        # localStorage read/write, goal carry-forward resolution
-│   └── xlsx-io.js        # export/import using vendored SheetJS
+│   ├── storage.js        # localStorage read/write, goal carry-forward resolution, monthly aggregation
+│   ├── charts.js         # Canvas bar-chart renderer shared by Week/Month/Year
+│   ├── modal.js          # in-app confirm/alert replacement
+│   └── xlsx-io.js        # export/import using vendored SheetJS, lazy-loaded on first use
 ├── /vendor
 │   └── xlsx.full.min.js  # SheetJS, vendored for offline/no-CDN operation
 └── /docs
@@ -223,11 +230,11 @@ To resolve "today's goal," find the Goal record with the latest `effectiveDate` 
 
 ### API Design (browser-only: internal data flow)
 
-There are no HTTP endpoints. Internal "API" is the module boundary between `storage.js` (read/write `localStorage`, resolve today's goal) and `app.js` (rendering). `xlsx-io.js` exposes two functions: `exportToWorkbook(entries, goals) -> Blob` and `importFromWorkbook(file) -> Promise<{entries, goals}>`, with import errors surfaced as a rejected promise (caught by `app.js` and shown as an inline error, not a thrown exception to the console).
+There are no HTTP endpoints. Internal "API" is the module boundary between `storage.js` (read/write `localStorage`, resolve today's goal, monthly aggregation), `charts.js` (`mountChart()`, reusable across Week/Month/Year), `modal.js` (`confirmModal()`/`alertModal()`, Promise-based replacements for native dialogs), and `app.js` (rendering). `xlsx-io.js` exposes two async functions: `exportToWorkbook(entries, goals) -> Promise<void>` (triggers a file download via `XLSX.writeFile`) and `importFromWorkbook(file) -> Promise<{entries, goals}>`; both lazily inject the vendored SheetJS `<script>` tag on first call. Import errors surface as a rejected promise, caught by `app.js` and shown via `alertModal()`, not a thrown exception to the console.
 
 ### State Management
 
-All state is derived from two `localStorage` keys (`proteinpulse_entries`, `proteinpulse_goals`), read on load into in-memory arrays and re-serialized on every mutation. No client-side router or framework state: views (Today/Week/Month) are plain functions that read the same in-memory arrays and re-render their section of the DOM.
+All state is derived from two `localStorage` keys (`proteinpulse_entries`, `proteinpulse_goals`), read on load into in-memory arrays and re-serialized on every mutation. No client-side router or framework state: views (Today/Week/Month/Year) are plain functions that read the same in-memory arrays and re-render their section of the DOM. The Month and Year views additionally hold a small in-memory offset (not persisted) tracking which month/year is currently being viewed.
 
 ### Third-Party Integrations
 
@@ -238,14 +245,13 @@ All state is derived from two `localStorage` keys (`proteinpulse_entries`, `prot
 
 - Page weight (excluding vendored SheetJS, which is ~900KB minified): target under 100KB.
 - First meaningful paint under 500ms on a throttled connection, since there's no framework parse cost.
-- No render-blocking network requests: SheetJS should be loaded lazily (only when the user opens export/import), not on initial page load, to keep the core logging flow fast.
+- No render-blocking network requests: SheetJS is loaded lazily, injected as a `<script>` tag only on the first Export or Import click, not on initial page load.
 
 ### Known Technical Debt
 
-- **Week/Month are tables, not charts**: v0.4.0 shipped both views as `.data-table` rollups (date, calories, protein, ratio per row). Graphing this data is tracked separately as v0.5.0 rather than being retrofitted into the table markup.
-- **No month/day navigation**: the Month view always shows the current calendar month up to today; there's no way yet to page to a prior month. Acceptable for now since the app is new and has no historical data to browse, but will need addressing once real usage accumulates.
-- **`window.confirm`/`window.alert` for import feedback**: the import flow uses native browser dialogs for the overwrite confirmation and success/error messages rather than in-app modals matching the design system. Functional and accessible, but not visually consistent with the rest of the UI; acceptable for the current milestone, worth revisiting alongside a proper modal component if one gets built for another feature.
-- **SheetJS is a large vendored file** (~900KB, the minified build) loaded unconditionally via `<script src="vendor/xlsx.full.min.js">` on every page load, rather than lazily on first Export/Import click as the Performance Requirements section below calls for. Deferred until it's clear whether the load-time cost is actually noticeable in practice.
+- **Lighthouse accessibility score is not automated**: this project has no CI and no Node.js-based tooling, so the ≥95 target in Success Criteria is verified by a manual audit (contrast ratios calculated by hand, keyboard/focus walkthroughs, screen-reader passes) rather than an actual Lighthouse run. Worth automating if a CI pipeline is ever added.
+- **Year view recomputes daily totals on every render**: `totalsForMonth()` sums `totalsFor()` across every day of every month shown, with no memoization. Fine at current data scale (a few years of entries); would need caching if the entry list grows very large.
+- **Charts have no export of their own**: the Week/Month/Year charts are visual-only; the underlying numbers are already covered by the existing `.xlsx` export and the tables beneath each chart, but there's no "save chart as image" affordance.
 
 ## Security
 

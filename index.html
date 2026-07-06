@@ -26,6 +26,7 @@
     <button class="tab active" type="button" data-view="today">Today</button>
     <button class="tab" type="button" data-view="week">Week</button>
     <button class="tab" type="button" data-view="month">Month</button>
+    <button class="tab" type="button" data-view="year">Year</button>
   </nav>
 
   <main class="today-view">
@@ -143,6 +144,7 @@
     </section>
 
     <section id="view-week" class="view" hidden>
+      <div id="weekChart"></div>
       <table class="data-table">
         <thead>
           <tr>
@@ -157,6 +159,12 @@
     </section>
 
     <section id="view-month" class="view" hidden>
+      <div class="chart-nav">
+        <button class="btn-secondary" id="monthPrevBtn" type="button" aria-label="Previous month">&larr; Prev</button>
+        <span class="chart-nav-label" id="monthNavLabel"></span>
+        <button class="btn-secondary" id="monthNextBtn" type="button" aria-label="Next month">Next &rarr;</button>
+      </div>
+      <div id="monthChart"></div>
       <table class="data-table">
         <thead>
           <tr>
@@ -167,6 +175,26 @@
           </tr>
         </thead>
         <tbody id="monthTableBody"></tbody>
+      </table>
+    </section>
+
+    <section id="view-year" class="view" hidden>
+      <div class="chart-nav">
+        <button class="btn-secondary" id="yearPrevBtn" type="button" aria-label="Previous year">&larr; Prev</button>
+        <span class="chart-nav-label" id="yearNavLabel"></span>
+        <button class="btn-secondary" id="yearNextBtn" type="button" aria-label="Next year">Next &rarr;</button>
+      </div>
+      <div id="yearChart"></div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Calories</th>
+            <th>Protein</th>
+            <th>Ratio</th>
+          </tr>
+        </thead>
+        <tbody id="yearTableBody"></tbody>
       </table>
     </section>
   </main>
@@ -207,15 +235,23 @@
         </tr>
         <tr>
           <td>v0.5.0 - Graphs for Week and Month views</td>
-          <td><span class="roadmap-status status-planned">Planned</span></td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
         </tr>
         <tr>
           <td>v0.6.0 - Year view</td>
-          <td><span class="roadmap-status status-planned">Planned</span></td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
         </tr>
         <tr>
           <td>v1.0.0 - Responsive + accessibility audit</td>
+          <td><span class="roadmap-status status-done">Complete</span></td>
+        </tr>
+        <tr>
+          <td>Landing page: marketing / educational overview page</td>
           <td><span class="roadmap-status status-planned">Planned</span></td>
+        </tr>
+        <tr class="deferred">
+          <td>Local file sync via File System Access API (Chromium-only)</td>
+          <td><span class="roadmap-status status-deferred">Deferred</span></td>
         </tr>
         <tr class="deferred">
           <td>Google Sheets live sync</td>
@@ -227,8 +263,17 @@
 
   <footer class="site-footer">Built by <a href="https://github.com/Azqato">Azqato</a>.</footer>
 
-  <script src="vendor/xlsx.full.min.js"></script>
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalMessage">
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-message" id="modalMessage"></p>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
   <script src="js/storage.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/modal.js"></script>
   <script src="js/xlsx-io.js"></script>
   <script src="js/app.js"></script>
 </body>

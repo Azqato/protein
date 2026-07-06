@@ -2,7 +2,7 @@
 
 A free, open-source calorie and protein tracker that runs entirely in the browser.
 
-- **Live site**: not deployed yet
+- **Live site**: https://azqato.github.io/protein/
 - **Docs**: see [/docs](docs/PRD.md) for the full PRD, [DESIGN.md](docs/DESIGN.md) for the design system, and [PATCHNOTES.md](docs/PATCHNOTES.md) for the changelog
 
 ## Tech Stack

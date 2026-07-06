@@ -1,5 +1,39 @@
 # Patch Notes
 
+## v1.0.0 - 2026-07-05
+
+### Added
+- Manually audited every view (Today, Week, Month, Year) at all three DESIGN.md breakpoints (mobile, tablet, desktop): confirmed zero horizontal overflow via an automated headless-browser check comparing `scrollWidth` to `clientWidth` at each width.
+- Ran a manual accessibility pass in place of an automated Lighthouse run (no Node.js/CI tooling in this project): keyboard-only navigation through every interactive element, a screen-reader-oriented review of labels and landmarks, and added `aria-label`s to the new month/year Prev/Next buttons for clarity beyond their arrow glyphs.
+- Added `js/modal.js`: an in-app confirm/notice modal (`confirmModal()`/`alertModal()`) styled to match the rest of the design system, with focus trapped inside the modal while open, Escape-to-close, and focus restored to the triggering element on close.
+- Replaced the import flow's native `window.confirm`/`window.alert` calls with the new modal.
+- Lazy-loaded the vendored SheetJS library: `vendor/xlsx.full.min.js` is now injected as a `<script>` tag only on the first Export or Import click, instead of loading unconditionally on every page load.
+
+### Changed
+- Marked v0.5.0, v0.6.0, and v1.0.0 Complete in the roadmap table; added a Landing Page milestone and reordered the deferred items to sit after it.
+- Documentation (PRD.md, DESIGN.md) fully re-audited against the live app: folder structure, API description, state management, and Known Technical Debt all rewritten to match the actual shipped v1.0.0 code rather than the earlier planning-stage text.
+
+### Fixed
+- N/A for this release; see v0.5.0 and v0.6.0 below for the feature work that preceded this hardening pass.
+
+## v0.6.0 - 2026-07-05
+
+### Added
+- Built the Year view: a `.data-table` rollup with one row per month (Month, Calories, Protein, Ratio), aggregated from daily totals via a new `totalsForMonth()` helper in `js/storage.js` so the Year view shares the exact same definition of a "total" as Today/Week/Month.
+- Added a Year tab to the main navigation, wired into the existing `views` map and `.tab[data-view]` click handler.
+- Added a Year chart (via the `js/charts.js` helper from v0.5.0) showing calories and protein per month, with the calorie:protein ratio as a line overlay.
+- Added prior/next year navigation (`.chart-nav` with Prev/Next buttons and a year label) to the Year view; the "Next" button disables once you're back at the current year, since the app has no future data to show.
+- Added prior/next month navigation to the Month view (previously locked to the current calendar month), closing the "no month/day navigation" item from PRD.md's Known Technical Debt.
+
+## v0.5.0 - 2026-07-05
+
+### Added
+- Added `js/charts.js`: a hand-rolled Canvas bar-chart renderer (no vendored charting library, per Tenet 6), reading its colors directly from the app's CSS custom properties so charts always match the current palette.
+- Added a chart above the Week view's table: dual bars for calories (blue) and protein (amber), with the calorie:protein ratio as a line overlay.
+- Added a matching chart to the Month view, confirming the chart helper generalizes to a variable-length (28-31 day) axis.
+- Made chart data keyboard-accessible: each bar-group has an invisible, focusable hotspot button showing an exact-value tooltip on hover or keyboard focus, not mouse-hover only.
+- Added a visually-hidden text summary alongside each chart for screen readers; the existing data table beneath each chart remains the primary accessible data source, with the chart as a visual supplement rather than a replacement.
+
 ## v0.4.1 - 2026-07-05
 
 ### Added

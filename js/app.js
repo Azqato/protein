@@ -1,12 +1,15 @@
-// View rendering and event wiring for the Today, Week, and Month views.
+// View rendering and event wiring for the Today, Week, Month, and Year views.
 
 let entries = loadEntries();
 let goals = loadGoals();
+let monthOffset = 0; // 0 = current calendar month, -1 = previous month, etc.
+let yearOffset = 0; // 0 = current calendar year, -1 = previous year, etc.
 
 const views = {
   today: document.getElementById("view-today"),
   week: document.getElementById("view-week"),
   month: document.getElementById("view-month"),
+  year: document.getElementById("view-year"),
 };
 
 document.getElementById("todayDate").textContent = new Date().toLocaleDateString(undefined, {
@@ -26,6 +29,7 @@ tabs.forEach((tab) => {
     });
     if (view === "week") renderWeek();
     if (view === "month") renderMonth();
+    if (view === "year") renderYear();
   });
 });
 
@@ -47,6 +51,11 @@ function totalsFor(dateStr) {
 function formatRatio(calories, protein) {
   if (!protein || protein <= 0) return "N/A";
   return `${(calories / protein).toFixed(1)}:1`;
+}
+
+function ratioValue(calories, protein) {
+  if (!protein || protein <= 0) return null;
+  return calories / protein;
 }
 
 function renderGoalSummary() {
@@ -192,6 +201,15 @@ function lastNDates(n) {
   return dates;
 }
 
+function weekdayLabel(dateStr) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: "short" });
+}
+
+function dayOfMonthLabel(dateStr) {
+  return String(Number(dateStr.split("-")[2]));
+}
+
 function renderDayRows(tbody, dateStrs) {
   tbody.innerHTML = "";
   dateStrs.forEach((dateStr) => {
@@ -222,21 +240,138 @@ function renderDayRows(tbody, dateStrs) {
   });
 }
 
+function renderDayChart(containerId, title, dateStrs, labelFn) {
+  const container = document.getElementById(containerId);
+  const calorieValues = dateStrs.map((d) => totalsFor(d).calories);
+  const proteinValues = dateStrs.map((d) => totalsFor(d).protein);
+  const ratios = dateStrs.map((d) => {
+    const t = totalsFor(d);
+    return ratioValue(t.calories, t.protein);
+  });
+
+  mountChart(container, {
+    title,
+    labels: dateStrs.map(labelFn),
+    series: [
+      { label: "Calories", values: calorieValues, color: cssVar("--accent") },
+      { label: "Protein", values: proteinValues, color: cssVar("--accent-secondary") },
+    ],
+    ratio: ratios,
+    tooltipFor: (i) => {
+      const t = totalsFor(dateStrs[i]);
+      return `${dateStrs[i]}: ${t.calories} kcal, ${t.protein}g protein, ${formatRatio(t.calories, t.protein)} ratio`;
+    },
+  });
+}
+
 function renderWeek() {
-  renderDayRows(document.getElementById("weekTableBody"), lastNDates(7));
+  const dateStrs = lastNDates(7);
+  renderDayRows(document.getElementById("weekTableBody"), dateStrs);
+  renderDayChart("weekChart", "Calories and protein for the last 7 days", dateStrs, weekdayLabel);
+}
+
+function monthBounds(offset) {
+  const now = new Date();
+  const target = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  return { year: target.getFullYear(), month: target.getMonth() };
 }
 
 function renderMonth() {
+  const { year, month } = monthBounds(monthOffset);
   const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const daysSoFar = now.getDate();
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
+  const daysToShow = isCurrentMonth ? now.getDate() : daysInMonth(year, month);
+
   const dateStrs = [];
-  for (let day = 1; day <= daysSoFar; day++) {
+  for (let day = 1; day <= daysToShow; day++) {
     dateStrs.push(dateToStr(new Date(year, month, day)));
   }
+
+  document.getElementById("monthNavLabel").textContent = new Date(year, month, 1).toLocaleDateString(undefined, {
+    month: "long",
+    year: "numeric",
+  });
+  document.getElementById("monthNextBtn").disabled = monthOffset >= 0;
+
   renderDayRows(document.getElementById("monthTableBody"), dateStrs);
+  renderDayChart("monthChart", "Calories and protein for the month", dateStrs, dayOfMonthLabel);
 }
+
+document.getElementById("monthPrevBtn").addEventListener("click", () => {
+  monthOffset -= 1;
+  renderMonth();
+});
+
+document.getElementById("monthNextBtn").addEventListener("click", () => {
+  if (monthOffset >= 0) return;
+  monthOffset += 1;
+  renderMonth();
+});
+
+function renderYear() {
+  const now = new Date();
+  const year = now.getFullYear() + yearOffset;
+  const isCurrentYear = yearOffset === 0;
+  const monthsToShow = isCurrentYear ? now.getMonth() + 1 : 12;
+
+  document.getElementById("yearNavLabel").textContent = String(year);
+  document.getElementById("yearNextBtn").disabled = yearOffset >= 0;
+
+  const tbody = document.getElementById("yearTableBody");
+  tbody.innerHTML = "";
+
+  const monthLabels = [];
+  const calorieValues = [];
+  const proteinValues = [];
+  const ratios = [];
+
+  for (let month = 0; month < monthsToShow; month++) {
+    const totals = totalsForMonth(year, month, totalsFor);
+    const monthName = new Date(year, month, 1).toLocaleDateString(undefined, { month: "short" });
+    monthLabels.push(monthName);
+    calorieValues.push(totals.calories);
+    proteinValues.push(totals.protein);
+    ratios.push(ratioValue(totals.calories, totals.protein));
+
+    const tr = document.createElement("tr");
+    const monthTd = document.createElement("td");
+    monthTd.textContent = new Date(year, month, 1).toLocaleDateString(undefined, { month: "long" });
+    tr.appendChild(monthTd);
+    const calorieTd = document.createElement("td");
+    calorieTd.textContent = `${totals.calories} kcal`;
+    tr.appendChild(calorieTd);
+    const proteinTd = document.createElement("td");
+    proteinTd.textContent = `${totals.protein}g`;
+    tr.appendChild(proteinTd);
+    const ratioTd = document.createElement("td");
+    ratioTd.textContent = formatRatio(totals.calories, totals.protein);
+    tr.appendChild(ratioTd);
+    tbody.appendChild(tr);
+  }
+
+  mountChart(document.getElementById("yearChart"), {
+    title: `Calories and protein by month for ${year}`,
+    labels: monthLabels,
+    series: [
+      { label: "Calories", values: calorieValues, color: cssVar("--accent") },
+      { label: "Protein", values: proteinValues, color: cssVar("--accent-secondary") },
+    ],
+    ratio: ratios,
+    tooltipFor: (i) =>
+      `${monthLabels[i]} ${year}: ${calorieValues[i]} kcal, ${proteinValues[i]}g protein, ${formatRatio(calorieValues[i], proteinValues[i])} ratio`,
+  });
+}
+
+document.getElementById("yearPrevBtn").addEventListener("click", () => {
+  yearOffset -= 1;
+  renderYear();
+});
+
+document.getElementById("yearNextBtn").addEventListener("click", () => {
+  if (yearOffset >= 0) return;
+  yearOffset += 1;
+  renderYear();
+});
 
 document.getElementById("importFile").addEventListener("change", () => {
   const file = document.getElementById("importFile").files[0];
@@ -252,7 +387,11 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 document.getElementById("importBtn").addEventListener("click", async () => {
   const file = document.getElementById("importFile").files[0];
   if (!file) return;
-  if (!window.confirm("Importing will replace all current entries and goals. Continue?")) return;
+  const confirmed = await confirmModal(
+    "Importing will replace all current entries and goals. Continue?",
+    "Replace current data?"
+  );
+  if (!confirmed) return;
 
   try {
     const result = await importFromWorkbook(file);
@@ -269,9 +408,9 @@ document.getElementById("importBtn").addEventListener("click", async () => {
     saveEntries(entries);
     saveGoals(goals);
     renderToday();
-    window.alert("Import successful.");
+    await alertModal("Import successful.", "Success");
   } catch (err) {
-    window.alert(`Import failed: ${err.message}`);
+    await alertModal(`Import failed: ${err.message}`, "Import failed");
   }
 });
 

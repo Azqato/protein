@@ -1,6 +1,24 @@
-// Export/import via the vendored SheetJS library.
+// Export/import via the vendored SheetJS library, loaded lazily on first use
+// rather than on every page load, since the vendored file is ~900KB minified.
 
-function exportToWorkbook(entries, goals) {
+let xlsxLoadPromise = null;
+
+function ensureXlsxLoaded() {
+  if (window.XLSX) return Promise.resolve();
+  if (xlsxLoadPromise) return xlsxLoadPromise;
+
+  xlsxLoadPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "vendor/xlsx.full.min.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Could not load the xlsx library."));
+    document.body.appendChild(script);
+  });
+  return xlsxLoadPromise;
+}
+
+async function exportToWorkbook(entries, goals) {
+  await ensureXlsxLoaded();
   const workbook = XLSX.utils.book_new();
   const entriesSheet = XLSX.utils.json_to_sheet(entries);
   const goalsSheet = XLSX.utils.json_to_sheet(goals);
@@ -9,7 +27,8 @@ function exportToWorkbook(entries, goals) {
   XLSX.writeFile(workbook, `proteinpulse-export-${todayStr()}.xlsx`);
 }
 
-function importFromWorkbook(file) {
+async function importFromWorkbook(file) {
+  await ensureXlsxLoaded();
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (event) => {

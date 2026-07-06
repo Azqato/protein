@@ -1,5 +1,10 @@
 # Patch Notes
 
+## v1.1.2 - 2026-07-05
+
+### Added
+- Added "Move Roadmap out of the app into its own page" to the roadmap: the Roadmap table currently sits at the bottom of `index.html`, below every logging view. Planned: remove it from the app and give it a dedicated page (e.g. `roadmap.html`), linked from the site navigation instead.
+
 ## v1.1.1 - 2026-07-05
 
 ### Fixed

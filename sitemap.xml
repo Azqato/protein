@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Public pages of ProteinPulse, served from the /protein/ subdirectory of azqato.github.io.
+     This sitemap sits at the project root, so it may only list URLs under /protein/. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://azqato.github.io/protein/</loc></url>
+  <url><loc>https://azqato.github.io/protein/landing.html</loc></url>
+  <url><loc>https://azqato.github.io/protein/roadmap.html</loc></url>
+</urlset>

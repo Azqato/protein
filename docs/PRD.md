@@ -126,12 +126,42 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 | Local file sync via File System Access API (Chromium-only) | TBD | Post-v1 | Planned (deferred) |
 | Google Sheets live sync | TBD | Post-v1 | Planned (deferred) |
 
+### Feature Breakdown per Milestone
+
+Not yet written. A Documentation run fills this in.
+
 ### Explicitly Deferred Items
 
 - **Google Sheets live sync**: deferred because it requires OAuth/API-key handling, which conflicts with the "no server, no account" constraint until a clean client-only auth flow (e.g. Google Identity Services with a user-supplied API key) is designed and explicitly opted into by the user.
 - **Local file sync via File System Access API**: deferred pending a feasibility spike, since it's Chromium-only and its file-handle permission needs to be re-verified (and possibly re-granted) across browser restarts; needs testing before it's promised as a real feature rather than a Chrome-only convenience.
 - **Multiple goal profiles**: deferred until single-goal carry-forward is proven sufficient; adding profiles now would complicate the data model before there's evidence it's needed.
 - **CSV export**: deferred since `.xlsx` covers the stated requirement (Excel/Sheets compatibility); CSV adds a second export path with no new capability.
+
+### Verification Checklist
+
+Each PRD and DESIGN.md section that describes the code, and when it was last checked in full against the code. Later updates tick only the sections they touch (see Working Practice).
+
+| Section | Status |
+|---|---|
+| PRD: System Architecture | Not yet verified |
+| PRD: Tech Stack | Not yet verified |
+| PRD: Folder Structure | Not yet verified |
+| PRD: Data Models | Not yet verified |
+| PRD: API Design | Not yet verified |
+| PRD: State Management | Not yet verified |
+| PRD: Third-Party Integrations | Not yet verified |
+| PRD: Performance Requirements | Not yet verified |
+| PRD: Known Technical Debt | Not yet verified |
+| PRD: Security | Not yet verified |
+| PRD: Runbook | Not yet verified |
+| DESIGN: App Shell | Not yet verified |
+| DESIGN: Color Palette (design tokens) | Not yet verified |
+| DESIGN: Typography | Not yet verified |
+| DESIGN: Spacing and Radii | Not yet verified |
+| DESIGN: Breakpoints | Not yet verified |
+| DESIGN: Component Patterns | Not yet verified |
+| DESIGN: Accessibility Standards | Not yet verified |
+| DESIGN: Animation and Motion | Not yet verified |
 
 ## Metrics
 
@@ -170,6 +200,14 @@ Since there's no build/deploy pipeline, rollback is a `git revert` of the offend
 ### Environment Configs
 
 Single environment: static files served as-is. No staging/production config differences exist because there is no server-side configuration of any kind.
+
+### Environment Variable Reference
+
+None. The app has no server and reads no environment variables.
+
+### Test Browser
+
+Automated and headless browser tests use Microsoft Edge (see Browser Testing). On the maintenance machine (Windows) the binary is `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`. With Python Playwright, launch it with `p.chromium.launch(channel="msedge")`.
 
 ### Common Errors
 
@@ -395,7 +433,7 @@ It demonstrates a fully serverless, zero-cost-to-operate product (no hosting bil
 - Documentation lives exclusively in three files: root [README.md](../README.md) (developer-facing setup/run instructions) and `docs/PRD.md` (this file) and `docs/DESIGN.md` (visual/UX system), plus `docs/PATCHNOTES.md` (dated changelog). No other documentation files should be created. If new information doesn't fit one of these three, it belongs as a new section within one of them, not a new file.
 - Every change to the codebase that affects product scope, design system, or user-facing behavior must be accompanied by a corresponding update to the relevant doc(s) in the same change, plus a new dated entry in `PATCHNOTES.md`.
 - Before any documentation audit, the codebase must be crawled in full first (all files, features, routes/views, config) and compared line-by-line against each doc; docs are then rewritten to match the code's actual current state, not the other way around: code is the source of truth.
-- `README.md` must never contain marketing language; it is strictly developer setup/run/deploy instructions with a link to `/docs` for everything else.
+- `README.md` is the public front door, written for a general reader: what ProteinPulse is, the live link, what it offers, who it is for, its status, and a link to `/docs`. It carries no install steps, commands, ports, versions, or dependency lists (those live in the Runbook and Technical Requirements below), and no marketing language. This replaced the earlier rule ("strictly developer setup/run/deploy instructions") on 2026-09-29 at the author's request.
 - Writing style: no em dashes (neither the literal `—` character nor the `&mdash;` HTML entity) and no double-dash (`--`) used as punctuation anywhere in these docs or the app's HTML. See the Writing Style section below for the replacement methodology. This does not apply to CSS custom property names like `--accent`, which are valid CSS syntax, not punctuation.
 
 ## Writing Style
@@ -411,3 +449,130 @@ When rewriting a sentence that used an em dash, the replacement is chosen based 
 - **Period**: used when the cleanest fix is splitting one long sentence into two; shorter sentences are frequently clearer anyway.
 
 Any future contributor (human or AI) editing these docs or the app's HTML should apply this same methodology rather than reintroducing em dashes, and should periodically re-run a search for both forms plus stray `--` punctuation as part of a documentation or content pass.
+
+## Conventions
+
+Not yet written. A Documentation run fills this in.
+
+## Browser Testing
+
+No earlier rule existed; this is the default.
+
+- Use Microsoft Edge, never Chrome. Chrome is the owner's day-to-day browser, and driving it would disturb a live session. Edge runs the same engine and is free to use.
+- This covers every browser a test drives, not only one named in a config file: an ad hoc headless run from a script or shell command is testing and falls under the same rule.
+- The resolved binary path is recorded in the Runbook (Test Browser).
+- The project targets current Chrome, Firefox, Safari, and Edge (see Constraints). Automated tests drive Edge only; the other engines are checked by hand when a change touches engine-specific behavior (for example `backdrop-filter`, `100dvh`, or safe-area insets on iOS Safari).
+
+## Verification Environment
+
+The project's existing rule (Runbook, Deploy): test locally via `python -m http.server` before any push. Recorded as the rule. The default below adds to it without changing it.
+
+- Verify locally, never against production, unless a request explicitly asks for a production check. Production is where a change is confirmed to have arrived, not where it is tested.
+- Confirming a deploy landed is a separate step after the push: fetch the deployed files from GitHub Pages and compare them with the local copies. That is a comparison, not a test.
+- Known local versus production differences: production serves from the `/protein/` subdirectory of `azqato.github.io`, while a local server serves from `/`. Any root-absolute path (starting with `/`) works locally and breaks in production; the project uses relative paths for this reason. `localStorage` is scoped per origin, so data saved on `localhost:8000` is not visible on the live site and the reverse.
+- Never point a state-changing check at production. The app has no server, so the risk is limited to a tester's own browser storage.
+
+## Testing Cadence
+
+No earlier rule required a browser test after every change. The existing DESIGN.md rule that any new page or view is checked at all breakpoints before merging is kept, and is satisfied by the pre-ship browser test below.
+
+- Browser tests use headless Microsoft Edge, as Browser Testing says.
+- A major update ships when it is pushed to `main` (GitHub Pages deploys from it). "Before shipping" means right before that push.
+- Right before a major update ships, run two checks, once each:
+  1. Assumption check: list the assumptions the change relies on, marked verified (read in the code) or guessed (and from what). Check every cheap guess, fix what is wrong, and show the author what is still guessed.
+  2. Browser test, once. Do not test between edits.
+- If a change is large and depends on something not yet read, check that one thing before building on it.
+- A major update changes behavior, layout, scripts, styles, routing, the build, or dependencies. A minor one changes only wording, documentation, comments, patch notes, or data. Minor updates ship without a browser test or an assumption check.
+- Batch the work: make every edit first, then test once at the end. When a test fails, fix it and rerun only the failing check, then run the full test once before shipping.
+- A test the author asks for always runs.
+- Confirming that a deploy arrived is not a test, and still happens after every push.
+- Say what was not browser-tested in every summary. Never present an untested change as tested.
+
+## Repository Hygiene
+
+No earlier rule existed; this is the default, recorded as policy. Nothing here authorizes editing the ignore file or running a state-changing git command.
+
+- Canonical remote: https://github.com/Azqato/protein. Default branch: `main`, which GitHub Pages serves.
+- Secrets are never committed. The project has none today (no server, no keys). If one is ever needed, ignore `.env*`, re-include `!.env.example`, and put key names only in the example.
+- The project generates nothing: no build output, dependency directory, cache, or lockfile. The ignore file therefore only lists operating system files (`.DS_Store`, `Thumbs.db`), both of which this project's contributors' machines can produce.
+- Vendored code is committed on purpose: `vendor/xlsx.full.min.js` (SheetJS) is served directly from the repository and is updated by hand (see Dependency Policy).
+- `.nojekyll` is committed on purpose so GitHub Pages serves the files as-is.
+- Line endings: the project is edited on Windows with `core.autocrlf=true` and served from Linux. There is no `.gitattributes`; adding one with `* text=auto eol=lf` would pin line endings. Recorded as a gap under Documentation Versus Reality, not acted on.
+- Large binaries are kept out of history. The largest tracked file is the vendored SheetJS script (about 900KB).
+- Compliance checks (read and report only): an ignore file exists; no tracked file matches an ignore pattern; no dependency directory, build output, or cache is tracked; no tracked file holds credentials; `.gitattributes` pins line endings; every ignore entry names something the project produces.
+
+## Licensing
+
+The project's own stated posture: "free and open source" (Constraints, Press Release, landing page, README), with a Constraints rule that every vendored dependency is permissively licensed (MIT, Apache, or BSD). SheetJS is Apache-2.0.
+
+- No licence file exists and no licence is named, so there is currently no licence text behind the "open source" statement. Under the default policy that would mean all rights reserved, which contradicts the stated posture. No `LICENSE.md` was created; this is listed under Risks and Open Questions for the author to decide.
+- Never assert a licence without licence text. Once chosen, the licence goes in `LICENSE.md` at the repository root, never in `/docs`.
+- Hosting-platform view and fork rights operate independently of any licence.
+- robots.txt: the site is served from a subdirectory of `azqato.github.io`, and crawlers read robots.txt only from the domain root, so the robots.txt that governs this site belongs to the `azqato.github.io` repository, not this one. None is created here. The intended posture, if the domain owner applies one, is fully open (`User-agent: *`, `Allow: /`).
+- sitemap.xml sits at this project's root and lists only URLs under `/protein/`, which its location permits.
+
+## Social Sharing Tags
+
+No earlier rule existed; this is the default, recorded as policy. Pages were not edited.
+
+- Required on every shareable page: `og:title`, `og:description`, `og:url`, `og:type` ("website"), `og:site_name` ("ProteinPulse"), and `twitter:card`.
+- `og:url` is the absolute https URL of that page under `https://azqato.github.io/protein/`, never relative and never the site root.
+- Budgets: `og:title` 60 characters (70 ceiling), `og:description` 150 (200 maximum), `og:site_name` 20.
+- `og:title` does not repeat the site name. Descriptions are complete sentences based on the page's real content; an accurate existing meta description is reused.
+- Images are off by default: no `og:image`, and `twitter:card` is "summary".
+- Shareable pages: `index.html`, `landing.html`, `roadmap.html`. No page is excluded today.
+- Current state: no page carries Open Graph or Twitter tags. Recorded under Documentation Versus Reality.
+- Compliance checks (read and report, counted by script): all six tags present; length budgets; absolute unique https `og:url`; no `og:title` containing the site name; `twitter:card` is "summary" when there is no image.
+
+## Page Titles
+
+No earlier rule existed; this is the default, recorded as policy. Pages were not edited.
+
+- Shape: `<unique page name> - ProteinPulse`, 60 characters or fewer, first 30 characters unique across the site. Separator: " - ".
+- The homepage leads with the brand. For this project the app (`index.html`) is the homepage.
+- No placeholder titles, no emoji, no all caps in the first 30 characters.
+- Titles do not change at runtime today: the app keeps one title across its hash-routed screens. Whether each screen should set its own title is an open question.
+- Current titles: `ProteinPulse` (index.html, compliant), `ProteinPulse: two numbers, every day` (landing.html, brand-first with a colon), `ProteinPulse: Roadmap` (roadmap.html, brand-first with a colon). The last two differ from the default and are recorded under Documentation Versus Reality.
+
+## Deprecation and Removal
+
+No earlier rule existed; this is the default.
+
+- The deploy boundary is the set of files GitHub Pages serves from `main`. Public facing: the addresses `/protein/`, `/protein/index.html`, `/protein/landing.html`, `/protein/roadmap.html`, and the app's hash routes (`#/today`, `#/history`, `#/goal`, `#/more`). Also public: the localStorage keys `proteinpulse_entries`, `proteinpulse_goals`, and `proteinpulse_layout`, and the `.xlsx` export format (sheets "Entries" and "Goals"), since users' saved data depends on them.
+- Internal: CSS and JS source files, the docs, and everything else.
+- Removing a public page needs a compatibility entry. GitHub Pages has no server redirects, so the mechanism is a stub HTML page at the old address with a meta refresh and a link to the replacement. Unknown hash routes already fall back to Today.
+- Changing a storage key or export column needs a migration that still reads the old one.
+- Removing an internal file is a plain delete: no redirect, alias, or stub.
+- Compatibility entries are permanent, never chained, and never reused for different content.
+- Retired items: the old top header and Today/Week/Month/Year tabs (v2.0.0, replaced by the tab bar and History screen); `totalsForMonth()` in `storage.js` (v2.0.0, replaced by `buildDayIndex()`). Neither was publicly addressable.
+- Historical records (patch notes, roadmap rows) are never rewritten when something is removed.
+
+## Documentation Versus Reality
+
+| Finding | Trust | Status |
+|---|---|---|
+| No page has Open Graph or Twitter Card tags (Social Sharing Tags policy) | Code (the policy is new) | Open |
+| `landing.html` and `roadmap.html` titles are brand-first with a colon (Page Titles policy) | Code (the policy is new) | Open |
+| No `.gitattributes` pins line endings, and git reports LF/CRLF conversion warnings on commit | Code | Open |
+| "Free and open source" is stated in the docs, README, and landing page, but no licence file exists | Author to decide | Open |
+| `vendor/README.md` says SheetJS "will be added here in v0.3.0", but it has been vendored since v0.3.0 | Code | Open |
+
+Not yet written. A Documentation run fills this in. (a Documentation run checks the remaining sections against the code)
+
+## Risks and Open Questions
+
+Not yet written. A Documentation run fills this in.
+
+## Working Practice
+
+No CLAUDE.md exists, so there are no Claude-specific standing rules to mirror here. If one is added, each of its rules is recorded in this section, CLAUDE.md is the copy Claude reads, and the two change together.
+
+- Before editing, read the section that covers the area: DESIGN.md for anything visual, this PRD's Technical Requirements for data and architecture, and Writing Style for any text.
+- Follow the Documentation Process above: every change that affects scope, design, or behavior updates the relevant doc and adds a dated PATCHNOTES.md entry in the same change.
+- Verify a change as Testing Cadence says: local server, then an assumption check and one headless Edge test right before pushing a major update.
+- Verification checklist rule: when an update changes an area of the code, check that area's PRD or DESIGN.md section against the code in the same session, record any discrepancy under Documentation Versus Reality, and mark the section verified with the date on the Roadmap's Verification Checklist. Only the sections the update touches, never the whole list at once.
+- Ideas list rule: the default Documentation setup keeps the author's ideas in `docs/TODO.md`, checked before each push (fetching first, so an edit made on GitHub is never overwritten), with each idea turned into a researched Roadmap update only on the author's say-so. That file does not exist, because the Documentation Process allows only the four documents; whether to adopt it is an open question. Until then, ideas go straight to the Roadmap.
+
+## Project Defaults Setup
+
+A Project Defaults run on 2026-09-29 added the standing rules above (Browser Testing through Working Practice), the Verification Checklist, and missing headings, and rewrote the README for a general reader at the author's request. It did not check the documents against the code; sections marked "Not yet written" are filled by a full Documentation run, which also checks the documents against the code. Date of this setup: 2026-09-29. There has been no full documentation audit yet.

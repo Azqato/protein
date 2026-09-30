@@ -1,5 +1,18 @@
 # Patch Notes
 
+## v2.0.1 - 2026-09-29
+
+### Added
+- Added standing rules to docs/PRD.md from a Project Defaults run: Browser Testing (headless Microsoft Edge), Verification Environment, Testing Cadence, Repository Hygiene, Licensing, Social Sharing Tags, Page Titles, Deprecation and Removal, Documentation Versus Reality, Working Practice, and a Project Defaults Setup record. Where the project already had a rule (writing style, local testing before push, the breakpoint check before merging, the four-document limit), it was kept.
+- Added a Verification Checklist and a Feature Breakdown per Milestone heading under the PRD Roadmap, and Environment Variable Reference and Test Browser sections under the Runbook.
+- Added placeholder headings for Conventions and Risks and Open Questions, to be filled by a full Documentation run.
+- Added Breakpoints and Animation and Motion sections to docs/DESIGN.md, which the v2.0.0 rewrite had left out.
+- Added sitemap.xml at the root listing the three public pages.
+
+### Changed
+- Rewrote README.md for a general reader (what ProteinPulse is, the live link, what it offers, who it is for, status, and where to learn more). Install and run steps now live only in the PRD Runbook.
+- Changed the Documentation Process rule for README.md to match. The old wording was "`README.md` must never contain marketing language; it is strictly developer setup/run/deploy instructions with a link to `/docs` for everything else."
+
 ## v2.0.0 - 2026-09-29
 
 ### Changed

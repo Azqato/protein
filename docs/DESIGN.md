@@ -59,6 +59,19 @@ System font stack only (`system-ui, -apple-system, "Segoe UI", Roboto`), no webf
 
 4px base. Screen gutter 16px (12px under 360px). Cards 20px padding, 16px bottom margin. Radii: `--r-sm` 10, `--r-md` 14 (inputs, buttons), `--r-lg` 22 (cards, lists), `--r-xl` 28 (sheet). Touch targets are at least 40px, primary buttons 50px.
 
+## Breakpoints
+
+| Breakpoint | Change |
+|---|---|
+| `< 360px` | Screen gutter shrinks from 16px to 12px, the large title to 30px, the metric gap to 14px, and the log sheet's number inputs to 26px |
+| `< 640px` | Mobile: the app fills the viewport; the layout toggle is hidden |
+| `≥ 640px` and `≥ 700px` tall | Desktop, framed (default): 420px device frame; the Fullscreen toggle appears (it shows from 640px wide at any height) |
+| `≥ 700px` | Fullscreen layout, when chosen: content held to a 640px centered column |
+| `≥ 1080px` and `≥ 700px` tall | Framed layout adds the `.desk-aside` side panel |
+| `< 720px` (site pages) | `landing.html` and `roadmap.html` move the nav to a horizontally scrolling row under the wordmark |
+
+Grid tracks that could hold wide content use `minmax(0, 1fr)`, never a bare `1fr`, so content never forces horizontal page overflow.
+
 ## Component Patterns
 
 - **Rings** (Today): one SVG with two concentric arcs (outer calories r=86, inner protein r=62), `pathLength="100"` so progress is `stroke-dasharray: pct 100`. Gradient strokes with a soft glow, animated on change. The center shows kcal left (or "kcal over", or "kcal eaten" with no goal). The wrapper is `role="img"` with a live text label.
@@ -79,6 +92,13 @@ System font stack only (`system-ui, -apple-system, "Segoe UI", Roboto`), no webf
 ## Accessibility Standards
 
 Targets WCAG 2.1 AA. All text tokens clear 4.5:1 on their surfaces; `--accent` is never used as text. Everything interactive is a native `<a>`, `<button>`, or `<input>`, with a 2px `--accent-text` focus ring. Screens are labelled regions, the segmented control uses `role="tab"`/`aria-selected`, day rows use `aria-expanded`/`aria-controls`, and icon buttons carry descriptive `aria-label`s (e.g. "Delete Rice, 480 kcal, 5 grams protein"). The sheet and modal trap focus. Keyboard shortcuts: `N` log, `1` to `4` tabs, `F` toggle fullscreen (desktop), `Esc` close. The layout toggle uses `aria-pressed`.
+
+## Animation and Motion
+
+- Easing tokens: `--ease-out` `cubic-bezier(0.2, 0.8, 0.2, 1)` for quick responses, and `--ease-spring` `cubic-bezier(0.32, 0.72, 0, 1)` for things that travel (sheet, segmented thumb, rings).
+- Timings: 0.15s for hover and press feedback (buttons scale to 0.97, icon buttons to 0.92), 0.2 to 0.3s for fades, screen entry, and the segmented thumb, 0.42s for the sheet, and 0.9s for ring and progress-bar fills.
+- Motion is only used to show a state change: a ring filling, a sheet opening, a new row arriving, a toast appearing, or a shake on invalid input. Nothing moves decoratively or loops.
+- Under `prefers-reduced-motion: reduce`, all animation and transition durations collapse to near zero, and the sheet closes without waiting for its animation.
 
 ## Notes for future contributors / AI models
 

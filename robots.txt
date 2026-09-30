@@ -1,0 +1,8 @@
+# Deliberately fully open: crawlers, search engines, and AI assistants are welcome.
+# Note: while ProteinPulse is served from azqato.github.io/protein/, crawlers read
+# robots.txt only from the domain root, so this file takes effect once the project
+# moves to its own domain. LICENSE.md is authoritative if the two ever disagree.
+User-agent: *
+Allow: /
+
+Sitemap: https://azqato.github.io/protein/sitemap.xml

@@ -1,0 +1,5 @@
+# Pin line endings so every checkout has the same bytes (edited on Windows, served from Linux).
+* text=auto eol=lf
+
+# Vendored third-party code: never rewrite it, and keep it out of diffs and language stats.
+vendor/** -text linguist-vendored -diff

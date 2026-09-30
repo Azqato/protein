@@ -99,6 +99,13 @@ function icon(name) {
 
 const SCREENS = ["today", "history", "goal", "more"];
 const renderers = { today: renderToday, history: renderHistory, goal: renderGoal, more: renderMore };
+// Today is the homepage, so the brand leads; other screens front-load their own name.
+const SCREEN_TITLES = {
+  today: "ProteinPulse",
+  history: "History - ProteinPulse",
+  goal: "Goal - ProteinPulse",
+  more: "More - ProteinPulse",
+};
 
 function currentScreen() {
   const key = location.hash.replace(/^#\/?/, "");
@@ -113,6 +120,7 @@ function showScreen(key) {
     if (tab.dataset.tab === key) tab.setAttribute("aria-current", "page");
     else tab.removeAttribute("aria-current");
   });
+  document.title = SCREEN_TITLES[key];
   renderers[key]();
 }
 

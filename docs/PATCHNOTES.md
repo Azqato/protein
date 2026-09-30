@@ -1,5 +1,20 @@
 # Patch Notes
 
+## v2.0.2 - 2026-09-29
+
+### Added
+- Open Graph and Twitter Card tags (title, description, absolute URL, type, site name, summary card) on all three pages, with matching meta descriptions.
+- Each app screen now sets the browser tab title: Today shows "ProteinPulse", and History, Goal, and More show "History - ProteinPulse" and so on.
+- LICENSE.md: the project is MIT licensed. Vendored SheetJS keeps its Apache-2.0 licence.
+- robots.txt (fully open, with the sitemap), for use if the project moves to its own domain.
+- .gitattributes pins LF line endings and marks /vendor as vendored.
+- docs/TODO.md, the author's ideas list, now allowed by the Documentation Process.
+
+### Changed
+- Page titles: the landing page is now "About - ProteinPulse" and the roadmap is "Roadmap - ProteinPulse" (previously "ProteinPulse: two numbers, every day" and "ProteinPulse: Roadmap").
+- vendor/README.md now describes SheetJS as vendored, replacing a note that said it would be added in v0.3.0.
+- PRD: recorded the author's answers to the Project Defaults questions and marked the Documentation Versus Reality rows resolved.
+
 ## v2.0.1 - 2026-09-29
 
 ### Added

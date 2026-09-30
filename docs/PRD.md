@@ -238,6 +238,10 @@ Fully static, client-only single-page app. One `index.html`, plain CSS, plain JS
 ```
 /project-root
 ├── README.md
+├── LICENSE.md            # MIT licence text
+├── robots.txt            # fully open; only takes effect if the project moves to its own domain
+├── sitemap.xml           # the three public pages
+├── .gitattributes        # pins LF line endings; marks /vendor as vendored
 ├── index.html
 ├── landing.html          # marketing/educational overview page, separate from the app
 ├── roadmap.html          # Roadmap table, its own page, linked from the site navigation
@@ -256,7 +260,8 @@ Fully static, client-only single-page app. One `index.html`, plain CSS, plain JS
 └── /docs
     ├── PRD.md
     ├── DESIGN.md
-    └── PATCHNOTES.md
+    ├── PATCHNOTES.md
+    └── TODO.md           # the author's ideas list
 ```
 
 ### Data Models
@@ -430,7 +435,7 @@ It demonstrates a fully serverless, zero-cost-to-operate product (no hosting bil
 
 ## Documentation Process (how these docs are maintained)
 
-- Documentation lives exclusively in three files: root [README.md](../README.md) (developer-facing setup/run instructions) and `docs/PRD.md` (this file) and `docs/DESIGN.md` (visual/UX system), plus `docs/PATCHNOTES.md` (dated changelog). No other documentation files should be created. If new information doesn't fit one of these three, it belongs as a new section within one of them, not a new file.
+- Documentation lives exclusively in these files: root [README.md](../README.md) (the public front door), `docs/PRD.md` (this file), `docs/DESIGN.md` (visual/UX system), `docs/PATCHNOTES.md` (dated changelog), and `docs/TODO.md` (the author's ideas list, adopted 2026-09-29). No other documentation files should be created. If new information doesn't fit one of these, it belongs as a new section within one of them, not a new file. `LICENSE.md` is licence text, not documentation.
 - Every change to the codebase that affects product scope, design system, or user-facing behavior must be accompanied by a corresponding update to the relevant doc(s) in the same change, plus a new dated entry in `PATCHNOTES.md`.
 - Before any documentation audit, the codebase must be crawled in full first (all files, features, routes/views, config) and compared line-by-line against each doc; docs are then rewritten to match the code's actual current state, not the other way around: code is the source of truth.
 - `README.md` is the public front door, written for a general reader: what ProteinPulse is, the live link, what it offers, who it is for, its status, and a link to `/docs`. It carries no install steps, commands, ports, versions, or dependency lists (those live in the Runbook and Technical Requirements below), and no marketing language. This replaced the earlier rule ("strictly developer setup/run/deploy instructions") on 2026-09-29 at the author's request.
@@ -497,7 +502,7 @@ No earlier rule existed; this is the default, recorded as policy. Nothing here a
 - The project generates nothing: no build output, dependency directory, cache, or lockfile. The ignore file therefore only lists operating system files (`.DS_Store`, `Thumbs.db`), both of which this project's contributors' machines can produce.
 - Vendored code is committed on purpose: `vendor/xlsx.full.min.js` (SheetJS) is served directly from the repository and is updated by hand (see Dependency Policy).
 - `.nojekyll` is committed on purpose so GitHub Pages serves the files as-is.
-- Line endings: the project is edited on Windows with `core.autocrlf=true` and served from Linux. There is no `.gitattributes`; adding one with `* text=auto eol=lf` would pin line endings. Recorded as a gap under Documentation Versus Reality, not acted on.
+- Line endings: the project is edited on Windows and served from Linux. `.gitattributes` (added in v2.0.2) sets `* text=auto eol=lf` and marks `vendor/**` as vendored, binary-safe, and excluded from diffs.
 - Large binaries are kept out of history. The largest tracked file is the vendored SheetJS script (about 900KB).
 - Compliance checks (read and report only): an ignore file exists; no tracked file matches an ignore pattern; no dependency directory, build output, or cache is tracked; no tracked file holds credentials; `.gitattributes` pins line endings; every ignore entry names something the project produces.
 
@@ -505,15 +510,15 @@ No earlier rule existed; this is the default, recorded as policy. Nothing here a
 
 The project's own stated posture: "free and open source" (Constraints, Press Release, landing page, README), with a Constraints rule that every vendored dependency is permissively licensed (MIT, Apache, or BSD). SheetJS is Apache-2.0.
 
-- No licence file exists and no licence is named, so there is currently no licence text behind the "open source" statement. Under the default policy that would mean all rights reserved, which contradicts the stated posture. No `LICENSE.md` was created; this is listed under Risks and Open Questions for the author to decide.
+- The project is MIT licensed (chosen by the author on 2026-09-29). The text is in `LICENSE.md` at the repository root, which also notes that vendored SheetJS keeps its own Apache-2.0 licence.
 - Never assert a licence without licence text. Once chosen, the licence goes in `LICENSE.md` at the repository root, never in `/docs`.
 - Hosting-platform view and fork rights operate independently of any licence.
-- robots.txt: the site is served from a subdirectory of `azqato.github.io`, and crawlers read robots.txt only from the domain root, so the robots.txt that governs this site belongs to the `azqato.github.io` repository, not this one. None is created here. The intended posture, if the domain owner applies one, is fully open (`User-agent: *`, `Allow: /`).
+- robots.txt: the site is served from a subdirectory of `azqato.github.io`, and crawlers read robots.txt only from the domain root, so the robots.txt that governs this site today belongs to the `azqato.github.io` repository. A fully open `robots.txt` (`User-agent: *`, `Allow: /`, plus the sitemap) exists at this project's root anyway, at the author's request, so it takes effect if the project moves to its own domain.
 - sitemap.xml sits at this project's root and lists only URLs under `/protein/`, which its location permits.
 
 ## Social Sharing Tags
 
-No earlier rule existed; this is the default, recorded as policy. Pages were not edited.
+No earlier rule existed; this is the default, recorded as policy.
 
 - Required on every shareable page: `og:title`, `og:description`, `og:url`, `og:type` ("website"), `og:site_name` ("ProteinPulse"), and `twitter:card`.
 - `og:url` is the absolute https URL of that page under `https://azqato.github.io/protein/`, never relative and never the site root.
@@ -521,18 +526,18 @@ No earlier rule existed; this is the default, recorded as policy. Pages were not
 - `og:title` does not repeat the site name. Descriptions are complete sentences based on the page's real content; an accurate existing meta description is reused.
 - Images are off by default: no `og:image`, and `twitter:card` is "summary".
 - Shareable pages: `index.html`, `landing.html`, `roadmap.html`. No page is excluded today.
-- Current state: no page carries Open Graph or Twitter tags. Recorded under Documentation Versus Reality.
+- Current state: all three pages carry the six tags plus a matching meta description (added in v2.0.2). `og:title` values: "Calorie and protein tracker" (index), "Two numbers, every day" (landing), "Roadmap" (roadmap).
 - Compliance checks (read and report, counted by script): all six tags present; length budgets; absolute unique https `og:url`; no `og:title` containing the site name; `twitter:card` is "summary" when there is no image.
 
 ## Page Titles
 
-No earlier rule existed; this is the default, recorded as policy. Pages were not edited.
+No earlier rule existed; this is the default, recorded as policy.
 
 - Shape: `<unique page name> - ProteinPulse`, 60 characters or fewer, first 30 characters unique across the site. Separator: " - ".
 - The homepage leads with the brand. For this project the app (`index.html`) is the homepage.
 - No placeholder titles, no emoji, no all caps in the first 30 characters.
-- Titles do not change at runtime today: the app keeps one title across its hash-routed screens. Whether each screen should set its own title is an open question.
-- Current titles: `ProteinPulse` (index.html, compliant), `ProteinPulse: two numbers, every day` (landing.html, brand-first with a colon), `ProteinPulse: Roadmap` (roadmap.html, brand-first with a colon). The last two differ from the default and are recorded under Documentation Versus Reality.
+- The app sets `document.title` per screen in `showScreen()` (`SCREEN_TITLES` in `js/app.js`): Today is `ProteinPulse` (the homepage), and the others are `History - ProteinPulse`, `Goal - ProteinPulse`, and `More - ProteinPulse`.
+- Current titles: `ProteinPulse` (index.html), `About - ProteinPulse` (landing.html), `Roadmap - ProteinPulse` (roadmap.html). All compliant since v2.0.2.
 
 ## Deprecation and Removal
 
@@ -551,17 +556,27 @@ No earlier rule existed; this is the default.
 
 | Finding | Trust | Status |
 |---|---|---|
-| No page has Open Graph or Twitter Card tags (Social Sharing Tags policy) | Code (the policy is new) | Open |
-| `landing.html` and `roadmap.html` titles are brand-first with a colon (Page Titles policy) | Code (the policy is new) | Open |
-| No `.gitattributes` pins line endings, and git reports LF/CRLF conversion warnings on commit | Code | Open |
-| "Free and open source" is stated in the docs, README, and landing page, but no licence file exists | Author to decide | Open |
-| `vendor/README.md` says SheetJS "will be added here in v0.3.0", but it has been vendored since v0.3.0 | Code | Open |
+| No page has Open Graph or Twitter Card tags (Social Sharing Tags policy) | Code (the policy is new) | Resolved in v2.0.2: tags added to all three pages |
+| `landing.html` and `roadmap.html` titles are brand-first with a colon (Page Titles policy) | Code (the policy is new) | Resolved in v2.0.2: retitled, and app screens set their own titles |
+| No `.gitattributes` pins line endings, and git reports LF/CRLF conversion warnings on commit | Code | Resolved in v2.0.2: `.gitattributes` added and the index renormalized |
+| "Free and open source" is stated in the docs, README, and landing page, but no licence file exists | Author to decide | Resolved in v2.0.2: MIT, in `LICENSE.md` |
+| `vendor/README.md` says SheetJS "will be added here in v0.3.0", but it has been vendored since v0.3.0 | Code | Resolved in v2.0.2: note updated |
 
 Not yet written. A Documentation run fills this in. (a Documentation run checks the remaining sections against the code)
 
 ## Risks and Open Questions
 
-Not yet written. A Documentation run fills this in.
+Answered by the author on 2026-09-29 (Project Defaults follow-up, shipped in v2.0.2):
+
+- Ideas list: adopt `docs/TODO.md`.
+- Licence: MIT.
+- robots.txt: add one at the project root anyway, for a possible future own domain.
+- vendor/README.md: update the stale note.
+- Line endings: add `.gitattributes`.
+- Titles and sharing: retitle the site pages, add sharing tags, and give each app screen its own title.
+- README rule: keep the general-reader rule.
+
+Remaining risks are not yet written; a Documentation run fills them in.
 
 ## Working Practice
 
@@ -571,7 +586,7 @@ No CLAUDE.md exists, so there are no Claude-specific standing rules to mirror he
 - Follow the Documentation Process above: every change that affects scope, design, or behavior updates the relevant doc and adds a dated PATCHNOTES.md entry in the same change.
 - Verify a change as Testing Cadence says: local server, then an assumption check and one headless Edge test right before pushing a major update.
 - Verification checklist rule: when an update changes an area of the code, check that area's PRD or DESIGN.md section against the code in the same session, record any discrepancy under Documentation Versus Reality, and mark the section verified with the date on the Roadmap's Verification Checklist. Only the sections the update touches, never the whole list at once.
-- Ideas list rule: the default Documentation setup keeps the author's ideas in `docs/TODO.md`, checked before each push (fetching first, so an edit made on GitHub is never overwritten), with each idea turned into a researched Roadmap update only on the author's say-so. That file does not exist, because the Documentation Process allows only the four documents; whether to adopt it is an open question. Until then, ideas go straight to the Roadmap.
+- Ideas list rule: the author's ideas live in `docs/TODO.md`. Check it before each push, fetching first so an edit made on GitHub is never overwritten, and turn an idea into a researched Roadmap update only on the author's say-so.
 
 ## Project Defaults Setup
 

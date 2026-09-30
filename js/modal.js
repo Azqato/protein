@@ -43,7 +43,7 @@ function showModal({ title, message, buttons }) {
   buttons.forEach((btn, i) => {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = btn.primary ? "btn-primary" : "btn-secondary";
+    button.className = btn.primary ? "btn btn-primary" : "btn btn-secondary";
     button.textContent = btn.label;
     button.addEventListener("click", () => {
       close();

@@ -50,11 +50,12 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 - Week view: rollup of the last 7 days (totals, goal adherence, and ratio per day), plus a bar chart (calories, protein, and a ratio line overlay) above the table.
 - Month view: rollup of every day so far in the viewed month (totals, goal adherence, and ratio per day), a matching chart, and prior/next month navigation.
 - Year view: rollup of every month in the viewed year (aggregated from daily totals), a matching chart, and prior/next year navigation.
-- Fully responsive across the breakpoints defined in [DESIGN.md](DESIGN.md#breakpoints): manually audited at all three breakpoints across all four views with zero horizontal overflow.
+- Mobile app-style interface (v2.0.0): a phone-first app shell with a bottom tab bar (Today, History, Goal, More), a center + button opening a bottom log sheet with one-tap Recent chips, undo on add/delete, and hash routing. On desktop it renders in a centered phone frame (with a side panel of shortcuts and links on wide screens) by default, and a Fullscreen button (or `F`) switches to a window-filling layout with a centered content column; the choice is remembered per browser. See [DESIGN.md](DESIGN.md#app-shell).
+- History charts plot calories and protein as a percent of goal (with a goal line) so both series share a meaningful scale; they fall back to per-series scaling when goals are missing.
 - In-app confirm/notice modal for the import flow, replacing native `window.confirm`/`window.alert` dialogs, matching the rest of the design system.
 - Landing page (`landing.html`): a separate marketing- and education-oriented overview page introducing ProteinPulse to a first-time visitor (hero, problem statement, how-it-works steps, feature grid, tenets, FAQ), linked from the site navigation's About link. Distinct from the app itself: `index.html` stays the tool, the landing page sells and explains it.
 - Roadmap page (`roadmap.html`): the Roadmap table, formerly at the bottom of `index.html` below every logging view, now lives on its own page, reachable from the site navigation. `index.html` no longer contains a Roadmap section.
-- Site navigation: a five-link nav (About, App, Roadmap, GitHub, Support) shared identically across `index.html`, `landing.html`, and `roadmap.html`. Whichever page you're on renders in blue (`--accent-text`); every other link renders in high-contrast white (`--text`) rather than the previous muted grey, matching the same "blue means active" convention already used by the Today/Week/Month/Year tabs. The "ProteinPulse" wordmark in the header is also a clickable link to the About page on all three pages.
+- Site navigation: a five-link nav (About, App, Roadmap, GitHub, Support). On `landing.html` and `roadmap.html` it sits in the sticky header, with the current page in blue (`--accent-text`) and the rest in `--text`. In the app, the same links live in the More tab and the wide-desktop side panel, and the 💪🏼 avatar on Today links to About.
 
 ### Future (post-launch)
 
@@ -63,7 +64,7 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 - Streak tracking (consecutive days meeting protein goal).
 - Multiple goal profiles (e.g. "cut" vs "bulk" presets to switch between).
 - CSV export as an alternative to `.xlsx`.
-- Optional PWA install (offline-capable, add-to-homescreen); still no account, still local-storage-backed.
+- Optional PWA install (manifest + service worker for offline); still no account, still local-storage-backed. v2.0.0 already ships the iOS/Android home-screen meta tags.
 - Dark/light theme toggle (v1 is dark-mode only per explicit requirement).
 
 ## Constraints
@@ -101,7 +102,7 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 
 ### Current Phase
 
-**Phase 1 complete: v1.2.0 shipped.** Logging, goals, xlsx import/export, charted Week/Month/Year rollups with entry-level deletion, a responsive/accessibility hardening pass, a landing page, a dedicated roadmap page, and a consistent site-wide navigation are all live. Remaining roadmap items are explicitly post-v1, unscheduled.
+**Phase 2 complete: v2.0.0 shipped.** The interface was rebuilt as a mobile app-style shell. Logging, goals, xlsx import/export, charted Week/Month/Year rollups with entry-level deletion, a responsive/accessibility hardening pass, a landing page, a dedicated roadmap page, and a consistent site-wide navigation are all live. Remaining roadmap items are explicitly post-v1, unscheduled.
 
 | Milestone | Version | Timeframe | Status |
 |---|---|---|---|
@@ -121,6 +122,7 @@ People tracking body recomposition or muscle-gain goals care about two numbers a
 | Entry deletion from Week/Month/Year views | v1.2.0 | Done | Complete |
 | Header contrast and navigation pass | v1.2.0 | Done | Complete |
 | Move Roadmap out of the app into its own page | v1.2.0 | Done | Complete |
+| Mobile app-style interface redesign | v2.0.0 | Done | Complete |
 | Local file sync via File System Access API (Chromium-only) | TBD | Post-v1 | Planned (deferred) |
 | Google Sheets live sync | TBD | Post-v1 | Planned (deferred) |
 
@@ -202,11 +204,12 @@ Fully static, client-only single-page app. One `index.html`, plain CSS, plain JS
 ├── landing.html          # marketing/educational overview page, separate from the app
 ├── roadmap.html          # Roadmap table, its own page, linked from the site navigation
 ├── /css
-│   ├── styles.css
-│   └── landing.css       # landing-page-only styles, built on styles.css tokens
+│   ├── styles.css        # shared tokens, base, buttons
+│   ├── app.css           # app shell (index.html)
+│   └── landing.css       # site pages (landing.html, roadmap.html)
 ├── /js
-│   ├── app.js            # view rendering, event wiring
-│   ├── storage.js        # localStorage read/write, goal carry-forward resolution, monthly aggregation
+│   ├── app.js            # hash routing, screen rendering, log sheet, toasts, event wiring
+│   ├── storage.js        # localStorage read/write, goal carry-forward resolution
 │   ├── charts.js         # Canvas bar-chart renderer shared by Week/Month/Year
 │   ├── modal.js          # in-app confirm/alert replacement
 │   └── xlsx-io.js        # export/import using vendored SheetJS, lazy-loaded on first use
@@ -241,11 +244,11 @@ To resolve "today's goal," find the Goal record with the latest `effectiveDate` 
 
 ### API Design (browser-only: internal data flow)
 
-There are no HTTP endpoints. Internal "API" is the module boundary between `storage.js` (read/write `localStorage`, resolve today's goal, monthly aggregation), `charts.js` (`mountChart()`, reusable across Week/Month/Year), `modal.js` (`confirmModal()`/`alertModal()`, Promise-based replacements for native dialogs), and `app.js` (rendering). `xlsx-io.js` exposes two async functions: `exportToWorkbook(entries, goals) -> Promise<void>` (triggers a file download via `XLSX.writeFile`) and `importFromWorkbook(file) -> Promise<{entries, goals}>`; both lazily inject the vendored SheetJS `<script>` tag on first call. Import errors surface as a rejected promise, caught by `app.js` and shown via `alertModal()`, not a thrown exception to the console.
+There are no HTTP endpoints. Internal "API" is the module boundary between `storage.js` (read/write `localStorage`, resolve today's goal), `charts.js` (`mountChart()`, reusable across Week/Month/Year), `modal.js` (`confirmModal()`/`alertModal()`, Promise-based replacements for native dialogs), and `app.js` (rendering). `xlsx-io.js` exposes two async functions: `exportToWorkbook(entries, goals) -> Promise<void>` (triggers a file download via `XLSX.writeFile`) and `importFromWorkbook(file) -> Promise<{entries, goals}>`; both lazily inject the vendored SheetJS `<script>` tag on first call. Import errors surface as a rejected promise, caught by `app.js` and shown via `alertModal()`, not a thrown exception to the console.
 
 ### State Management
 
-All state is derived from two `localStorage` keys (`proteinpulse_entries`, `proteinpulse_goals`), read on load into in-memory arrays and re-serialized on every mutation. No client-side router or framework state: views (Today/Week/Month/Year) are plain functions that read the same in-memory arrays and re-render their section of the DOM, all routed through a single `switchToView(viewKey)` function that both the tab buttons and the Year view's month-drilldown links call, so there's one place that decides which view is visible and re-renders it. The Month and Year views additionally hold a small in-memory offset (not persisted) tracking which month/year is currently being viewed. Deleting an entry from an expanded Week/Month row re-renders the whole parent view (collapsing it back), the same "re-render everything" pattern the Today view has always used after any mutation.
+All state is derived from two `localStorage` keys (`proteinpulse_entries`, `proteinpulse_goals`), read on load into in-memory arrays and re-serialized on every mutation. Screens (Today/History/Goal/More) are routed by URL hash through `showScreen()`; every mutation calls `renderCurrent()`, which re-renders the visible screen. A small in-memory `state` object (not persisted) holds the History range, month/year offsets, and which day rows are expanded, so deleting an entry from an expanded day keeps it open. History aggregates through a one-pass per-date index (`buildDayIndex()`) instead of re-filtering entries per day.
 
 ### Third-Party Integrations
 
@@ -261,7 +264,6 @@ All state is derived from two `localStorage` keys (`proteinpulse_entries`, `prot
 ### Known Technical Debt
 
 - **Lighthouse accessibility score is not automated**: this project has no CI and no Node.js-based tooling, so the ≥95 target in Success Criteria is verified by a manual audit (contrast ratios calculated by hand, keyboard/focus walkthroughs, screen-reader passes) rather than an actual Lighthouse run. Worth automating if a CI pipeline is ever added.
-- **Year view recomputes daily totals on every render**: `totalsForMonth()` sums `totalsFor()` across every day of every month shown, with no memoization. Fine at current data scale (a few years of entries); would need caching if the entry list grows very large.
 - **Charts have no export of their own**: the Week/Month/Year charts are visual-only; the underlying numbers are already covered by the existing `.xlsx` export and the tables beneath each chart, but there's no "save chart as image" affordance.
 - **No bulk delete for a day's entries**: the Week/Month expandable rows delete one entry at a time, same as the Today view; clearing an entire day still means deleting each entry individually.
 
@@ -341,7 +343,7 @@ In your browser's local storage, on your device only. Nothing is sent to a serve
 Your log is lost unless you've exported it. Export regularly to an `.xlsx` file as a backup.
 
 **Can I use it on my phone?**
-Yes. It's fully responsive and works in any modern mobile browser. There's no native app.
+Yes. It's designed phone-first, with a tab bar and one-tap logging, and works in any modern mobile browser. There's no native app.
 
 **Can I sync between my phone and computer?**
 Not automatically in v1. Export a `.xlsx` on one device and import it on the other. Automatic Google Sheets sync is on the roadmap.

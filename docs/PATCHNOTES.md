@@ -1,5 +1,26 @@
 # Patch Notes
 
+## v2.0.0 - 2026-09-29
+
+### Changed
+- Rebuilt the whole interface as a mobile app-style shell. On phones it fills the screen, respecting safe areas. On desktop it sits in a centered phone frame with a side panel of shortcuts and links, and a Fullscreen button (or `F`) switches to a window-filling layout with a centered 640px column; the choice is remembered per browser.
+- Replaced the top header and Today/Week/Month/Year tabs with a bottom tab bar: Today, History, Goal, More, plus a raised + button. Screens are hash-routed (`#/today` etc.) so browser back/forward work.
+- Today: concentric calorie/protein rings showing kcal left, per-macro progress bars with "left" and percent, the ratio, and an entry list with timestamps.
+- Logging moved to a bottom sheet with large numeric-keypad fields, drag-to-dismiss, and inline validation.
+- History: Week/Month/Year segmented control, summary tiles (average calories and protein, days logged, protein-goal days), and expandable day rows with mini goal bars. Expanded rows now stay open after a delete.
+- Charts now plot percent of goal with a dashed goal line, use rounded gradient bars, support tap-to-inspect on touch, and re-render through `ResizeObserver`.
+- Goal editor moved to its own tab, showing the current goal, the target ratio, and goal history. Export/Import moved to More; Import is now a single tap that opens the file picker, then asks for confirmation.
+- New palette: layered near-black surfaces, blue/amber gradients, tabular numbers. Landing and roadmap pages redesigned to match (phone mockup hero, `<details>` FAQ, grouped roadmap).
+
+### Added
+- Recent chips in the log sheet refill a past entry's numbers and label in one tap (drawn from your own history; no food database).
+- Undo toast after adding or deleting an entry.
+- Keyboard shortcuts: `N` log entry, `1` to `4` switch tabs, `F` toggle fullscreen (desktop), `Esc` close.
+- Home-screen meta tags (`theme-color`, `apple-mobile-web-app-capable`).
+
+### Removed
+- `totalsForMonth()` in `storage.js`, replaced by a one-pass per-date index in `app.js`.
+
 ## v1.2.0 - 2026-07-06
 
 ### Added

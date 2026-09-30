@@ -2,129 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050507">
   <title>ProteinPulse: Roadmap</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%92%AA%F0%9F%8F%BC</text></svg>">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/landing.css">
 </head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <h1><a class="brand-link" href="landing.html"><span class="logo" aria-hidden="true">💪🏼</span>Protein<span class="accent">Pulse</span></a></h1>
-      <p class="today-date">Roadmap</p>
-    </div>
-    <div class="header-right">
-      <a class="nav-link" href="landing.html">About</a>
-      <a class="nav-link" href="index.html">App</a>
-      <a class="nav-link active" href="roadmap.html">Roadmap</a>
-      <a class="nav-link" href="https://github.com/Azqato/protein" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="nav-link" href="https://azqato.github.io/support.html" target="_blank" rel="noopener noreferrer">Support</a>
+<body class="site">
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand-link" href="landing.html"><span aria-hidden="true">💪🏼</span>Protein<span class="accent">Pulse</span></a>
+      <nav class="site-nav" aria-label="Site">
+        <a class="nav-link" href="landing.html">About</a>
+        <a class="nav-link" href="index.html">App</a>
+        <a class="nav-link active" href="roadmap.html" aria-current="page">Roadmap</a>
+        <a class="nav-link" href="https://github.com/Azqato/protein" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="nav-link" href="https://azqato.github.io/support.html" target="_blank" rel="noopener noreferrer">Support</a>
+      </nav>
+      <a class="btn btn-primary header-cta" href="index.html">Open app</a>
     </div>
   </header>
 
-  <main class="roadmap">
-    <h2>Roadmap</h2>
-    <table class="data-table roadmap-table">
-      <thead>
-        <tr>
-          <th>Milestone</th>
-          <th>Version</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Documentation (README, PRD, DESIGN, PATCHNOTES)</td>
-          <td>v0.0.1</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Template scaffold</td>
-          <td>v0.0.1</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Branding - 💪🏼 emoji as favicon and main logo</td>
-          <td>v0.0.2</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Today view logging + local storage</td>
-          <td>v0.1.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Goal editor with carry-forward model</td>
-          <td>v0.2.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>xlsx export / import</td>
-          <td>v0.3.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Week / Month views</td>
-          <td>v0.4.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Footer and header Support link</td>
-          <td>v0.4.1</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Graphs for Week and Month views</td>
-          <td>v0.5.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Year view</td>
-          <td>v0.6.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Responsive + accessibility audit</td>
-          <td>v1.0.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Modal backdrop visibility fix</td>
-          <td>v1.0.1</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Landing page: marketing / educational overview page</td>
-          <td>v1.1.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Entry deletion from Week / Month / Year views</td>
-          <td>v1.2.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Header contrast and navigation pass</td>
-          <td>v1.2.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr>
-          <td>Move Roadmap out of the app into its own page</td>
-          <td>v1.2.0</td>
-          <td><span class="roadmap-status status-done">Complete</span></td>
-        </tr>
-        <tr class="deferred">
-          <td>Local file sync via File System Access API (Chromium-only)</td>
-          <td>TBD</td>
-          <td><span class="roadmap-status status-deferred">Deferred</span></td>
-        </tr>
-        <tr class="deferred">
-          <td>Google Sheets live sync</td>
-          <td>TBD</td>
-          <td><span class="roadmap-status status-deferred">Deferred</span></td>
-        </tr>
-      </tbody>
-    </table>
+  <main class="wrap">
+    <header class="roadmap-head">
+      <p class="section-kicker">Roadmap</p>
+      <h1 class="section-title">Where ProteinPulse is headed</h1>
+      <div class="progress-summary">
+        <div class="track" aria-hidden="true"><span style="width: 89%"></span></div>
+        <span>17 shipped · 2 planned</span>
+      </div>
+    </header>
+
+    <section class="roadmap-group" aria-labelledby="plannedTitle">
+      <h2 id="plannedTitle">Planned</h2>
+      <ul class="milestones">
+        <li class="milestone planned"><span class="milestone-mark" aria-hidden="true">·</span><span class="milestone-title">Local file sync via File System Access API (Chromium-only)</span><span class="milestone-version">TBD</span></li>
+        <li class="milestone planned"><span class="milestone-mark" aria-hidden="true">·</span><span class="milestone-title">Google Sheets live sync</span><span class="milestone-version">TBD</span></li>
+      </ul>
+    </section>
+
+    <section class="roadmap-group" aria-labelledby="shippedTitle">
+      <h2 id="shippedTitle">Shipped</h2>
+      <ul class="milestones">
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Mobile app-style interface redesign</span><span class="milestone-version">v2.0.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Move Roadmap out of the app into its own page</span><span class="milestone-version">v1.2.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Header contrast and navigation pass</span><span class="milestone-version">v1.2.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Entry deletion from Week, Month, and Year views</span><span class="milestone-version">v1.2.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Landing page: marketing and educational overview</span><span class="milestone-version">v1.1.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Modal backdrop visibility fix</span><span class="milestone-version">v1.0.1</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Responsive and accessibility audit</span><span class="milestone-version">v1.0.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Year view</span><span class="milestone-version">v0.6.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Graphs for Week and Month views</span><span class="milestone-version">v0.5.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Footer and header Support link</span><span class="milestone-version">v0.4.1</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Week and Month views</span><span class="milestone-version">v0.4.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">xlsx export and import</span><span class="milestone-version">v0.3.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Goal editor with carry-forward model</span><span class="milestone-version">v0.2.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Today view, logging, and local storage</span><span class="milestone-version">v0.1.0</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Branding: 💪🏼 emoji as favicon and main logo</span><span class="milestone-version">v0.0.2</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Template scaffold</span><span class="milestone-version">v0.0.1</span></li>
+        <li class="milestone"><span class="milestone-mark" aria-hidden="true">✓</span><span class="milestone-title">Documentation (README, PRD, DESIGN, PATCHNOTES)</span><span class="milestone-version">v0.0.1</span></li>
+      </ul>
+    </section>
   </main>
 
   <footer class="site-footer">Built by <a href="https://azqato.com/" target="_blank" rel="noopener noreferrer">Azqato</a>.</footer>

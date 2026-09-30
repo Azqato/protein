@@ -2,98 +2,87 @@
 
 ## Design Philosophy
 
-Legibility first, hierarchy second, color only when it adds meaning. ProteinPulse is a data-entry tool, not a marketing surface: the day's numbers (calories, protein, remaining budget) should be the loudest thing on screen. The palette is a VS Code Dark+ inspired set of layered greys rather than flat black, giving the page visible depth (page, card, raised input) without introducing decoration. Motion is kept minimal so nothing competes with the numbers for attention.
+ProteinPulse looks and behaves like a native phone app, and runs in any browser. The day's two numbers (calories and protein, against goal) are the loudest thing on screen; everything else is one tap away. Surfaces are layered near-blacks, so depth comes from tone rather than borders. Motion is short, springy, and always tied to a state change (a ring filling, a sheet sliding up, a row appearing), and is disabled under `prefers-reduced-motion`.
+
+## App Shell
+
+- **Mobile (< 640px wide)**: the app fills the viewport (`100dvh`), respecting safe-area insets (`viewport-fit=cover`).
+- **Desktop, framed (default)**: the app renders inside a centered 420px device frame (44px radius, bezel ring, blue ambient glow). At 1080px and wider, a `.desk-aside` panel beside it shows the wordmark, tagline, keyboard shortcuts, and the five site links.
+- **Desktop, fullscreen (optional)**: a `.layout-toggle` button (top right, 640px and wider only, or the `F` key) adds `html.layout-full`. The app then fills the window with screens, tab bar, sheet, and toast held to a centered 640px column (`--col` / `--col-pad`). The choice is saved in `localStorage` under `proteinpulse_layout` as a per-browser preference, not app data, and an inline head script applies it before first paint so the page never flashes the wrong layout.
+- **Screens**: Today, History, Goal, More. Each is an independently scrolling `.screen`, routed by URL hash (`#/today`, `#/history`, `#/goal`, `#/more`) so browser back/forward work.
+- **Tab bar** (`.tabbar`): fixed to the bottom, translucent blur, four tabs plus a raised center **+** button (`.fab`) that opens the log sheet. The active tab uses `aria-current="page"` and `--accent-text`.
+- **Navbar** (`.navbar`): each screen has a large 34px title; once it scrolls away a compact sticky title bar fades in with a blurred background.
 
 ## Color Palette
 
-Dark-mode only. All colors are CSS custom properties on `:root` (see [css/styles.css](../css/styles.css)).
+Dark mode only. All tokens are on `:root` in [css/styles.css](../css/styles.css).
 
-| Token | Hex | Use |
+| Token | Value | Use |
 |---|---|---|
-| `--bg` | `#1e1e1e` | Page background (VS Code editor grey, not black) |
-| `--surface` | `#252526` | Card / section backgrounds, ring track hole |
-| `--surface-raised` | `#2d2d2d` | Inputs, table header row |
-| `--surface-alt` | `#292929` | Alternating table row stripe |
-| `--header-bg` | `#333333` | Top header bar, one tier lighter than cards |
-| `--border` | `#3c3c3c` | Hairline dividers, input borders, card borders |
-| `--text` | `#d4d4d4` | Primary text, headings, key numbers (VS Code default text grey, ~11:1 contrast on `--bg`) |
-| `--text-muted` | `#9a9a9a` | Labels, captions, secondary stats |
-| `--accent` | `#0018f9` | Solid fills only: button background, progress ring stroke. Deliberately deep/saturated; only ever paired with white text on top, never used as text itself |
-| `--accent-text` | `#6b87ff` | Brighter blue used anywhere accent color appears as text: ring labels, active tab, accent-colored table values, focus outline. ~5.2–6:1 contrast against `--bg`/`--surface`, chosen specifically because the deep `--accent` measured only ~2.3:1 as text and failed legibility |
-| `--accent-dim` | `rgba(0, 24, 249, 0.18)` | Accent-tinted backgrounds |
-| `--accent-secondary` | `#e8a33d` | Protein's contrasting color: ring, label, and remaining-total value. Warm amber, blue's complement on the color wheel, ~7.7:1 contrast |
-| `--accent-secondary-dim` | `rgba(232, 163, 61, 0.18)` | Amber-tinted backgrounds |
-| `--danger` | `#ff5c5c` | Delete affordance hover state |
-| `--success` | `#3ddc97` | Completed roadmap status, on-track states |
+| `--bg` | `#050507` | Page backdrop (desktop, site pages) |
+| `--app-bg` | `#0b0b0f` | App background |
+| `--surface` | `#15151b` | Cards, lists, sheet |
+| `--surface-2` | `#1d1d25` | Inputs, chips, expanded rows, modal |
+| `--surface-3` | `#292932` | Progress tracks, active segment, pressed states |
+| `--separator` | white 7% | Hairlines between rows, card edges |
+| `--border` | white 10% | Input and chip outlines |
+| `--text` | `#f4f4f7` | Primary text and key numbers |
+| `--text-2` | `#a6a6b3` | Secondary text (~7:1 on `--surface`) |
+| `--text-3` | `#8c8c99` | Tertiary text, inactive tabs, chart labels (~5.3:1) |
+| `--accent` | `#0018f9` | Brand blue, **fill only** (buttons, FAB, ring and bar gradients). Never a text color (~2.3:1) |
+| `--accent-hi` | `#4f6bff` | Light end of calorie gradients |
+| `--accent-text` | `#7d95ff` | Blue as text: active tab, links, calorie values, focus ring (~6.6:1) |
+| `--accent-soft` | blue 24% | Calorie ring track, blue icon tiles |
+| `--protein` | `#f2a93b` | Protein: ring, bars, values (~9:1) |
+| `--protein-hi` | `#ffc873` | Light end of protein gradients |
+| `--protein-soft` | amber 20% | Protein ring track, amber icon tiles |
+| `--danger` | `#ff6b6b` | Delete hover, "kcal over" |
+| `--success` | `#3ddc97` | Current-goal pill, shipped milestones, privacy icon |
 
-Calories are always blue (`--accent-text` for text, `--accent` for the ring fill); protein is always amber (`--accent-secondary`). This pairing is deliberate: the two macros must be visually distinguishable at a glance without reading labels, and warm/cool is a stronger distinction than two shades of one hue.
-
-**Why two blue tokens exist**: a single `--accent` cannot serve both purposes at once. As a large fill (button background, ring arc) `#0018f9` easily clears contrast requirements with white text on top. As small text on a dark background, that same deep blue only reaches ~2.3:1, well under the 4.5:1 AA minimum. Rather than compromise the brand blue's saturation everywhere, `--accent-text` exists specifically for text-role usage. Any new UI element must decide which role it's playing (fill vs. text) and pick the matching token; never use `--accent` as a `color:` value.
+Calories are always blue and protein is always amber, everywhere. Status is never color-only: over-goal states say "over" in text.
 
 ## Typography
 
-System font stack only (`-apple-system, "Segoe UI", Roboto, sans-serif`): no webfonts, no network requests.
+System font stack only (`system-ui, -apple-system, "Segoe UI", Roboto`), no webfonts. All numbers use `font-variant-numeric: tabular-nums` (`.num`) so they don't jitter as they change.
 
-| Role | Size | Weight | Line height |
-|---|---|---|---|
-| H1 (page title) | 20px | 700 | 1.2 |
-| H2 (section label) | 13px, uppercase, letter-spacing 0.05em | 600 | 1.2 |
-| Body | 14px | 400 | 1.5 |
-| Key number (ring center, totals) | 28–36px via `clamp()` | 700 | 1.1 |
-| Caption (e.g. "0 kcal / 2500 kcal") | 12px | 400 | 1.4 |
-| Label (form labels) | 12px | 500 | 1.4 |
-| Table cell | 13px | 400 (600 for the value column) | 1.5 |
-| Code / monospace (export filenames, etc.) | 13px, `ui-monospace` | 400 | 1.4 |
-
-## Spacing System
-
-4px base unit. Common increments: 4, 8, 12, 16, 20, 24, 32, 48px. Card padding is 24px; cards and tables carry a 20px `margin-bottom` so stacked sections read as distinct panels. Max content width 1200px, centered, with 24px horizontal padding on the container (16px below 700px).
-
-## Breakpoints
-
-| Breakpoint | Change |
+| Role | Size / weight |
 |---|---|
-| `≥ 1023px` | Full desktop layout: three-stat row (Calories ring / kcal-today / Protein ring) side by side |
-| `700px – 1022px` | Stat row wraps to a 2-column grid; log-entry form fields stack to full width above the button |
-| `≤ 699px` | Single column throughout; rings shrink; tab bar (Today/Week/Month/Year) becomes equal-width flex items instead of centered links; table cell padding tightens from 12px to 10px; chart height shrinks from 140px to 110px and `.chart-nav` buttons/label shrink to fit |
+| Large screen title | 34px / 800, -0.03em |
+| Ring center number | clamp(30px, 9vw, 40px) / 800 |
+| Metric, tile, goal values | 24 to 32px / 800 |
+| Section head | 20px / 700 |
+| Body, row titles | 15px / 400 to 600 |
+| Captions, row subtitles | 13px / 500 to 600 |
+| Eyebrows, tile labels | 12 to 13px / 600, uppercase |
 
-All grid tracks that could contain wide content use `minmax(0, 1fr)`, never a bare `1fr`, to prevent content from forcing horizontal page overflow. Flex children wrapping scrollable content get `min-height: 0` so they scroll internally instead of pushing the page taller/wider than intended.
+## Spacing and Radii
+
+4px base. Screen gutter 16px (12px under 360px). Cards 20px padding, 16px bottom margin. Radii: `--r-sm` 10, `--r-md` 14 (inputs, buttons), `--r-lg` 22 (cards, lists), `--r-xl` 28 (sheet). Touch targets are at least 40px, primary buttons 50px.
 
 ## Component Patterns
 
-- **Cards** (`.card`): `--surface` background, `--border` 1px border, 10px border radius, 24px padding, 20px bottom margin. Used for the stat row, log-entry form, entry list, goal editor, and data import/export section.
-- **Tables** (`.data-table`): real `<table>` elements, not styled `<div>` rows. `--surface` background with `--surface-alt` alternating row stripes, `--surface-raised` header row, right-aligned value columns, 10px border radius with `overflow: hidden` to clip the corners.
-- **Progress rings**: conic-gradient circle, `--border` track, `--accent` (calories) or `--accent-secondary` (protein) progress arc, `--surface` punched center so the ring reads as a distinct layer against the card behind it, percentage centered in `--text`, label below in `--accent-text` / `--accent-secondary`.
-- **Buttons**: primary action (`.btn-primary`, e.g. `+ Add to Today`, `Save Goal`) is solid `--accent` fill with white text, full-width, 0.9 opacity on hover. Secondary actions (`.btn-secondary`, e.g. Export/Import) use `--surface-raised` with a `--border` outline that switches to `--accent-text` on hover. Delete actions (`.btn-delete`) are outlined and turn `--danger` on hover.
-- **Inputs**: `--surface-raised` background, `--border` 1px border, `--accent-text` border/focus ring on focus, `--text-muted` placeholder.
-- **File input**: visually hidden (`opacity: 0`, absolutely positioned) inside a `.btn-secondary`-styled `<label>` so file choosers match the rest of the button system instead of the browser default control.
-- **Tabs (Today/Week/Month/Year)**: text buttons, active tab colored `--accent-text` with a matching underline.
-- **Header** (`.topbar`): its own `--header-bg` tier, one step lighter than the page background, so it reads as a distinct bar rather than blending into the page.
-- **Itemized entry list**: a `.data-table` with Date, Item, Macros, and a Delete action column; empty state shows centered `--text-muted` text ("No entries logged yet").
-- **Expandable table rows** (`.row-toggle`, `.entry-subrow`, `.entry-subrow-item`): the date cell in the Week/Month tables is a full-width button; clicking it inserts a `.entry-subrow` directly beneath (a `--surface-alt` row spanning all columns) listing that day's individual entries with the same delete affordance as the Today view's itemized list. A `::after` chevron (`▸`/`▾`) reflects `aria-expanded`. Deleting an entry re-renders the whole parent view, which collapses the row back rather than patching it in place, the same "re-render everything" pattern used everywhere else in the app. The Year view's month cells reuse `.row-toggle` for a different purpose: clicking one jumps to the Month view for that month instead of expanding in place, so it intentionally carries no `aria-expanded` state or chevron.
-- **Roadmap**: its own page (`roadmap.html`), not a section within the app. A `.data-table` with Milestone, Version, and Status columns, so every entry cites the patch note it shipped in (or `TBD` if unscheduled); status is a pill (`.roadmap-status`) colored by state (`--success` for Complete, `--surface-raised` neutral for Planned/Deferred).
-- **Site navigation** (`.nav-link`): the same five links (About, App, Roadmap, GitHub, Support) rendered identically in `.header-right` on all three pages (`index.html`, `landing.html`, `roadmap.html`). Default state is `--text` (high contrast, not the old muted grey); the current page's link gets `.nav-link.active`, colored `--accent-text`, the same blue used by the active Today/Week/Month/Year tab, so "blue means you are here" is consistent everywhere. External links (GitHub, Support) open in a new tab; internal links (About, App, Roadmap) do not.
-- **Clickable wordmark** (`.brand-link`): the "ProteinPulse" logo and text in the header is a single link to the About page (`landing.html`) on all three pages, wrapping the `.logo` emoji and the "Protein"/"Pulse" text; `color: inherit` so it keeps the existing logo colors, with a 0.85-opacity hover matching the button hover convention elsewhere.
-- **Footer**: centered, muted, one line ("Built by Azqato", linking to https://azqato.com/), identical across all three pages; the only accent-colored element on the page that isn't functional app data.
-- **Charts** (`.chart-wrap`): a `.card`-like panel (same `--surface`/`--border`/10px radius) wrapping a Canvas bar chart (`js/charts.js`). Calories render in `--accent`, protein in `--accent-secondary`, matching the rings and tables; the calorie:protein ratio overlays as a `--text`-colored line. A layer of invisible, focusable `.chart-hotspot` buttons sits over the canvas, one per bar-group, so exact values are reachable via keyboard focus (not just mouse hover) through a `.chart-tooltip` popover. A visually-hidden text summary (`.visually-hidden`) gives screen readers the same data the chart shows visually; the chart is always a supplement to the data table beneath it, never a replacement.
-- **Chart navigation** (`.chart-nav`): Prev/Next `.btn-secondary` buttons flanking a centered label (e.g. "July 2026"), used above the Month and Year charts to page between periods. The Week view has no navigation since it's always a fixed rolling 7-day window relative to today.
-- **Modal** (`.modal-backdrop` / `.modal`): a `--surface` panel over a semi-transparent scrim, used by `js/modal.js` (`confirmModal()`/`alertModal()`) in place of native `window.confirm`/`window.alert`, so the import flow's dialogs match the rest of the design system. Traps focus while open, closes on Escape, and returns focus to the triggering element on close.
-- **Visually-hidden utility** (`.visually-hidden`): the standard clip-based pattern (1px box, clipped, not `display: none`) for content meant for screen readers only, such as chart summaries.
-- **Landing page** (`landing.html`, `css/landing.css`): the only page in the project with an editorial rather than utilitarian layout, since its job is to sell and explain rather than log data. Reuses every token and most components from `styles.css` (`.card`, `.btn-primary`/`.btn-secondary`, `.ring`/`.stat-row` as a static hero visual, `.site-footer`) so it never introduces a new color or a one-off component; `landing.css` only adds layout for sections that don't exist in the app (hero, numbered steps, feature grid, tenet list, FAQ) plus `.landing-tagline` (the "Free and open source" byline, set to `--text` rather than the muted `.today-date` class reserved for the app's real date display). Reachable from the shared site navigation's About link, and links back to the app via "Open ProteinPulse" CTAs.
+- **Rings** (Today): one SVG with two concentric arcs (outer calories r=86, inner protein r=62), `pathLength="100"` so progress is `stroke-dasharray: pct 100`. Gradient strokes with a soft glow, animated on change. The center shows kcal left (or "kcal over", or "kcal eaten" with no goal). The wrapper is `role="img"` with a live text label.
+- **Metrics**: two columns (Calories, Protein) with eaten / goal, a 6px gradient bar, and "X left · Y%".
+- **Lists** (`.list`): grouped rounded containers with inset hairline separators. Rows are 60px or taller.
+- **Entry rows** (`.entry`): label (or "Entry"), time, kcal and protein stacked right, trash icon button. Deleting shows an **Undo** toast; newly added rows animate in.
+- **Log sheet** (`.sheet-layer`): bottom sheet with a grab handle (drag down to dismiss), backdrop tap, close button, and Escape. It traps focus and returns focus on close. Two large numeric fields (`inputmode="decimal"`), an optional label, and **Recent** chips (the user's own last 8 distinct labels) that refill all three fields in one tap. Validation shakes the fields and shows an inline error.
+- **Segmented control** (`.segmented`): Week / Month / Year with a sliding thumb, `role="tablist"`.
+- **Period navigator**: chevron buttons flanking the period label, hidden for the rolling week.
+- **Tiles** (`.tiles`): 2×2 summary: average calories and protein per logged day, days logged, and protein-goal days hit.
+- **Charts** (`js/charts.js`): hand-rolled Canvas. Values are plotted as **% of goal** with a dashed GOAL line when every period with data has a goal; otherwise each series is scaled to its own max. Rounded gradient bars, the ratio as a white line on its own scale, and empty periods as grey stubs. Each group has a focusable hotspot; hover, focus, or tap shows a tooltip and highlights the column. A visually-hidden summary mirrors the data. Charts re-render through `ResizeObserver`.
+- **Day rows** (History): friendly date ("Today", "Yesterday", "Mon, Sep 28"), entry count and ratio, mini goal bars, totals, and a chevron. Tapping expands the day's entries in place with delete. Expanded state persists across re-renders (deleting no longer collapses the row). Year rows are months; tapping one opens that month.
+- **Toast** (`.toast`): floats above the tab bar, `role="status"`, with an optional action (Undo). Stays 5s with an action, 2.4s without.
+- **Modal** (`js/modal.js`): centered alert-style dialog over the app for import confirmation and results. Focus is trapped, Escape closes it, and focus is restored.
+- **Buttons**: `.btn` + `.btn-primary` (solid `--accent`, blue glow) or `.btn-secondary` (`--surface-2` with outline). They scale to 0.97 when pressed.
+- **Site pages** (`landing.html`, `roadmap.html`, `css/landing.css`): sticky blurred header with the wordmark, the five-link nav (horizontally scrollable on mobile), and an "Open app" button. The landing page has a hero with a static phone mockup of the Today screen, step and feature cards, tenets, and a `<details>` FAQ. The roadmap is grouped Planned / Shipped lists with a version chip per milestone.
 
 ## Accessibility Standards
 
-Targets WCAG 2.1 AA. `--text` (`#d4d4d4`) on `--bg` (`#1e1e1e`) measures roughly 11:1. `--accent-text` (`#6b87ff`), the token used for all blue text, measures roughly 5.2–6:1 against both `--bg` and `--surface`, comfortably above the 4.5:1 minimum for normal text; the original `--accent` (`#0018f9`) is never used as a `color:` value because it only reaches ~2.3:1 there. `--accent-secondary` (`#e8a33d`) measures roughly 7.7:1. Status is never color-only: over/under goal states pair color with a text label (e.g. "2400 kcal remaining", not just a colored number), and calories/protein are distinguished by both color (blue vs. amber) and label text, not color alone. All interactive elements are native `<button>`/`<input>`/`<a>`/`<label>` for built-in keyboard and screen-reader support; visible focus ring uses `--accent-text` at 2px outline, never `outline: none` without a replacement. Charts are supplemented, not replaced, by a visually-hidden text summary and a row of keyboard-focusable hotspot buttons, since a `<canvas>` element itself is not natively accessible. The modal (`js/modal.js`) traps Tab focus within its buttons while open and restores focus to the triggering element on close, so it never leaves a keyboard user stranded behind an invisible backdrop.
-
-## Animation & Motion
-
-Functional only: 0.15s ease transitions on hover/focus/active states for buttons, tabs, and inputs. No page-load animations, no decorative motion.
+Targets WCAG 2.1 AA. All text tokens clear 4.5:1 on their surfaces; `--accent` is never used as text. Everything interactive is a native `<a>`, `<button>`, or `<input>`, with a 2px `--accent-text` focus ring. Screens are labelled regions, the segmented control uses `role="tab"`/`aria-selected`, day rows use `aria-expanded`/`aria-controls`, and icon buttons carry descriptive `aria-label`s (e.g. "Delete Rice, 480 kcal, 5 grams protein"). The sheet and modal trap focus. Keyboard shortcuts: `N` log, `1` to `4` tabs, `F` toggle fullscreen (desktop), `Esc` close. The layout toggle uses `aria-pressed`.
 
 ## Notes for future contributors / AI models
 
-- This is a static, no-build, vanilla HTML/CSS/JS site; there is no CSS preprocessor and no component framework. Keep styles in plain CSS custom properties as shown above.
-- Color additions should stay inside the palette table above; don't introduce new one-off hex values in component CSS.
-- When adding a UI element that uses the brand blue, decide fill vs. text first and pick `--accent` or `--accent-text` accordingly; see "Why two blue tokens exist" above.
-- Any new page/view must be checked at all breakpoints listed above before merging.
-- The favicon and header logo are the 💪🏼 emoji: the favicon is an inline SVG data URI (`<link rel="icon" href="data:image/svg+xml,...">` in `index.html`) rather than a binary image file, keeping the project dependency-free.
-- Charts are hand-rolled Canvas drawing (`js/charts.js`), not a vendored charting library, per Tenet 6 (no dependency that needs a build step). Any future chart change should stay inside that file's plain Canvas 2D calls rather than introducing a charting package.
+- Static, no-build, vanilla HTML/CSS/JS. Keep colors inside the token table; decide fill vs. text before using blue.
+- Test new UI at 360px and 390px mobile, and on desktop in both framed and fullscreen layouts.
+- The favicon and logo are the 💪🏼 emoji (inline SVG data URI).
+- Charts stay in plain Canvas 2D in `js/charts.js`; no charting library.
